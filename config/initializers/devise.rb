@@ -206,6 +206,11 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', :scope => 'user,public_repo'
+  config.omniauth :twitter, ENV['TUMIMO_TWITTER_KEY'], ENV['TUMIMO_TWITTER_SECRET']
+  config.omniauth :facebook, ENV['TUMIMO_FACEBOOK_KEY'], ENV['TUMIMO_FACEBOOK_SECRET'] #, 
+  #:client_options => {:ssl => {:ca_path => '/etc/ssl/certs'}}
+  #{:scope => 'email,user_birthday,offline_access', :client_options => {:ssl => {:ca_file => '/usr/lib/ssl/certs/ca-certificates.crt'}}} 
+
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
