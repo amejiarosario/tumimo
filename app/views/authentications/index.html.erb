@@ -5,7 +5,6 @@
     <th>User</th>
     <th>Provider</th>
     <th>Uid</th>
-    <th>Data</th>
     <th></th>
     <th></th>
     <th></th>
@@ -16,7 +15,6 @@
     <td><%= authentication.user_id %></td>
     <td><%= authentication.provider %></td>
     <td><%= authentication.uid %></td>
-    <td><%= authentication.data %></td>
     <td><%= link_to 'Show', authentication %></td>
     <td><%= link_to 'Edit', edit_authentication_path(authentication) %></td>
     <td><%= link_to 'Destroy', authentication, method: :delete, data: { confirm: 'Are you sure?' } %></td>
