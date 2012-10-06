@@ -42,4 +42,7 @@ gem "twitter-bootstrap-rails", '=2.1.0'
 #gem 'devise'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
+gem 'omniauth-github'
+gem 'omniauth-foursquare'
+gem 'omniauth-linkedin'
 gem 'rails-footnotes', :group => :development

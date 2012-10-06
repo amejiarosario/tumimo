@@ -10,6 +10,9 @@ class SessionsController < ApplicationController
   			redirect_to authentications_path, notice: "You already has your #{oauth['provider']} account linked."
   		else
   			current_user.authentications.create!(provider: oauth['provider'], uid: oauth['uid'], data: oauth.to_json.to_s)
+				current_user.name = oauth.try(:[],'info').try(:[],'name') || oauth.try(:[],'info').try(:[],'nickname') if current_user.name.blank?
+				current_user.email = oauth.try(:[],'info').try(:[],'email') if current_user.email.blank?  			
+				current_user.save
   			redirect_to authentications_path, notice: "Your new #{oauth['provider']} account has been linked successfully!"
   		end
   	else
@@ -19,9 +22,8 @@ class SessionsController < ApplicationController
 				redirect_to root_url, notice: 'Awwww Yeah! Welcome back!'
 			else
 				user = User.new
-				user.name = oauth.try(:[],'info').try(:[],'name') || 
-										oauth.try(:[],'info').try(:[],'nickname')
-				user.email = oauth.try(:[],'info').try(:[],'email')
+				user.name = oauth.try(:[],'info').try(:[],'name') || oauth.try(:[],'info').try(:[],'nickname') if user.name.blank?
+				user.email = oauth.try(:[],'info').try(:[],'email') if user.email.blank?
 				if user.save
 					user.authentications.create!(provider: oauth['provider'], uid: oauth['uid'], data: oauth.to_json.to_s)
 					session[:user_id] = user.id
