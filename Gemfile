@@ -39,7 +39,7 @@ gem "twitter-bootstrap-rails", '=2.1.0'
 # To use debugger
 # gem 'debugger'
 
-gem 'devise'
+#gem 'devise'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem 'rails-footnotes', :group => :development
