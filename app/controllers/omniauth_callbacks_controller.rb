@@ -8,7 +8,7 @@ class OmniauthCallbacksController < ApplicationController
       sign_in_and_redirect(:user, authentication.user)
     elsif current_user
       current_user.authentications.create(provider: oauth['provider'], uid: oauth['uid'])
-      flash[:notice] = "Your #{oauth['provider']} has been added successfully!"
+      flash[:notice] = "Your #{oauth['provider']} account has been linked successfully!"
       redirect_to authentications_url
     else
       user = User.new
