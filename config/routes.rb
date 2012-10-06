@@ -1,8 +1,8 @@
 Tumimo::Application.routes.draw do
+  resources :authentications
   resources :channels
-
   get "home/index"
-
+  match '/auth/:provider/callback' => 'authentications#create'
   devise_for :users, controllers: { omniauth_callbacks: "omniauth_callbacks" }
 
   # The priority is based upon order of creation:
