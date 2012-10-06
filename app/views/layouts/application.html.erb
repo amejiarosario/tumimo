@@ -45,7 +45,7 @@
             			</ul>
             		</li>
               <% else %>
-                <li><%= link_to "Sign in with Twitter", user_omniauth_authorize_path(:twitter) %></li>
+                <li><%= link_to "Sign in", user_omniauth_authorize_path(:twitter) %></li>
             	<% end %>
             </ul>
           </div><!--/.nav-collapse -->
@@ -58,10 +58,10 @@
         <div class="span3">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
-              <li class="nav-header">Sidebar</li>
-              <li><%= link_to "Link1", "/path1"  %></li>
-              <li><%= link_to "Link2", "/path2"  %></li>
-              <li><%= link_to "Link3", "/path3"  %></li>
+              <li class="nav-header">Sign in</li>
+              <li><%= link_to "Twitter", user_omniauth_authorize_path(:twitter)  %></li>
+              <li><%= link_to "Facebook", user_omniauth_authorize_path(:facebook)  %></li>
+              <li><%= link_to "Google", '#' %></li>
             </ul>
           </div><!--/.well -->
         </div><!--/span-->

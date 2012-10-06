@@ -1,4 +1,4 @@
-class OmniauthCallbacksController < Devise::OmniauthCallbacksController
+class OmniauthCallbacksController < ApplicationController
  
   def all
     oauth = request.env["omniauth.auth"]
@@ -29,6 +29,6 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     raise request.env["omniauth.auth"].to_yaml
   end
 
-  alias_method :twitter, :all
-  alias_method :facebook, :all
+  # alias_method :twitter, :unknown
+  # alias_method :facebook, :unknown
 end

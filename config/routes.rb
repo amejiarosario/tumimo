@@ -2,7 +2,9 @@ Tumimo::Application.routes.draw do
   resources :authentications
   resources :channels
   get "home/index"
-  match '/auth/:provider/callback' => 'authentications#create'
+  get 'omniauth_callbacks/unknown'
+  get 'omniauth_callbacks/all'
+  match 'users/auth/:provider/callback' => 'omniauth_callbacks#unknown'
   #devise_for :users, controllers: { omniauth_callbacks: "omniauth_callbacks" }
 
   # The priority is based upon order of creation:
