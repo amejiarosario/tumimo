@@ -17,9 +17,11 @@ ActiveRecord::Schema.define(:version => 20121006063312) do
     t.integer  "user_id"
     t.string   "provider"
     t.string   "uid"
+    t.string   "oauth_token"
+    t.datetime "oauth_token_at"
     t.text     "data"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "channels", :force => true do |t|
