@@ -17,33 +17,33 @@ class MongoTwitter
       :oauth_token => oauth_token,
       :oauth_token_secret => oauth_token_secret
     )
-    
-    puts 'CALLED: @twitter.current_user'
+
     @subject = @twitter.current_user.to_hash
     save_user_info(@subject)
   end
 
   def friend_ids
-    data = @mongodb['friend_ids'].find_one(_id: @subject[:id])
-    if data.nil?
-      puts 'CALLED: @twitter.friend_ids'
-      data = @twitter.friend_ids.to_a
-      @mongodb['friend_ids'].insert(prepare_data(data))
-    end
-    data['data']
+    get_or_fetch(:friend_ids)
   end
 
   def follower_ids
-    data = @mongodb['follower_ids'].find_one(_id: @subject[:id])
-    if data.nil?
-      puts 'CALLED: @twitter.follower_ids'
-      data = @twitter.follower_ids.to_a
-      @mongodb['follower_ids'].insert(prepare_data(data))
-    end
-    data['data']
+    get_or_fetch(:follower_ids)
   end
 
   private
+    def get_or_fetch(method, predata=nil)
+      method = method.to_sym
+      data = @mongodb[method].find_one(_id: @subject[:id])
+      if data.nil?
+        puts "CALLED: @twitter.#{method.to_s} for _id: #{@subject[:id]}"
+        data = predata ? predata : @twitter.send(method).to_a
+        @mongodb[method].insert(prepare_data(data))
+        data
+      else
+        data['data']
+      end      
+    end
+
     def save_user_info(user)
       if @mongodb['user_info'].find_one(_id: user[:id].to_s).nil?
         id = @mongodb['user_info'].insert(prepare_data(user))
