@@ -49,4 +49,5 @@ gem 'rails-footnotes', :group => :development
 gem 'mongo'
 gem 'bson_ext'
 gem 'twitter'
+gem 'koala'
 gem 'pry-rails', :group => :development

@@ -34,15 +34,8 @@ class User < ActiveRecord::Base
 
 	def twitter
 		unless @twitter
-			Twitter.configure do |config|
-			  config.consumer_key = ENV['TUMIMO_TWITTER_KEY']
-			  config.consumer_secret = ENV['TUMIMO_TWITTER_SECRET']
-			end
 			tw_oauth = authentications.where(provider: 'twitter').first
-			@twitter = Twitter::Client.new(
-			  :oauth_token => tw_oauth.oauth_token,
-			  :oauth_token_secret => tw_oauth.oauth_secret
-			)
+			@twitter = MongoTwitter.new(tw_oauth.oauth_token, tw_oauth.oauth_secret)
 		end
 		@twitter
 	end

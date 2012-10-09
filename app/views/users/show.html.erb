@@ -31,19 +31,36 @@
   <dd><%= @user.authentications.map { |e| e.provider }.join(', ') %></dd>
 </dl>
 
+<hr>
 <h3>Facebook</h3>
-<h3>You</h3>
+<hr>
+<b>You already know...</b>
 <dl class="dl-horizontal">
   <% u = @user.facebook.get_object('me') %>
-  <dt><strong>Name:</strong></dt><dd><%= u['name'] %></dd>
-  <dt><strong>Hometown:</strong></dt><dd><%= u['hometown']['name'] %></dd>
-  <dt><strong>Work:</strong></dt><dd><%= "#{u['work'][0]['position']['name']} at #{u['work'][0]['employer']['name']}" %></dd>
+  <dt><strong>Name:</strong></dt><dd><%= u['name'] || '-' %></dd>
+  <dt><strong>Hometown:</strong></dt><dd><%= u['hometown']['name'] || '-'  %></dd>
+  <dt><strong>Work:</strong></dt><dd><%= "#{u['work'][0]['position']['name']} at #{u['work'][0]['employer']['name']}" || '-'  %></dd>
 </dl>
 
-<h3>Your Friends</h3>
+<b>Did you know that...? </b>
 <dl class="dl-horizontal">
   <% f = @user.facebook_friends %>
   <dt><strong>Friends Count:</strong></dt><dd><%= f.count %></dd>
 </dl>
+
+<hr>
+<h3>Twitter</h3>
+<hr>
+<b>You already know...</b>
+<dl class="dl-horizontal">
+  <% t = @user.twitter %>
+  <dt><strong>Username:</strong></dt><dd><%= t.subject[:screen_name] || '-'  %></dd>
+  <dt><strong>Description:</strong></dt><dd><%= t.subject[:description] || '-'  %></dd>
+  <dt><strong>Favorites:</strong></dt><dd><%= t.subject[:favourites_count] || '-'  %></dd>
+  <dt><strong>Following:</strong></dt><dd><%= t.friend_ids.count || '-'  %></dd>
+  <dt><strong>Followers:</strong></dt><dd><%= t.follower_ids.count || '-'  %></dd>
+</dl>
+
+<b>Did you know that...? </b>
 
 
