@@ -5,7 +5,8 @@ class CreateAuthentications < ActiveRecord::Migration
       t.string :provider
       t.string :uid
       t.string :oauth_token
-      t.datetime :oauth_token_at      
+      t.string :oauth_secret
+      t.datetime :oauth_token_expires_at      
       t.text :data
 
       t.timestamps

@@ -12,8 +12,8 @@
   <dd><%= @authentication.uid %></dd>
   <dt><strong><%= model_class.human_attribute_name(:oauth_token) %>:</strong></dt>
   <dd><%= @authentication.oauth_token %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:oauth_token_at || "None") %>:</strong></dt>
-  <dd><%= @authentication.oauth_token_at || "None" %></dd>  
+  <dt><strong><%= model_class.human_attribute_name(:oauth_token_expires_at) %>:</strong></dt>
+  <dd><%= @authentication.oauth_token_expires_at || "None" %></dd>  
   <dt><strong><%= model_class.human_attribute_name(:data) %>:</strong></dt>
   <dd><%= @authentication.data %></dd>
 </dl>
