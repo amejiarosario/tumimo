@@ -2,6 +2,7 @@ class MongoTwitter
   attr_reader :mongodb
   attr_reader :twitter
   attr_reader :subject
+  attr_accessor :ttl
 
   def initialize(oauth_token, oauth_token_secret,
                  consumer_key = ENV['TUMIMO_TWITTER_KEY'], 
@@ -20,45 +21,74 @@ class MongoTwitter
 
     @subject = @twitter.current_user.to_hash
     save_user_info(@subject)
+
+    @ttl=nil
   end
 
-  def friend_ids
-    get_or_fetch(:friend_ids)
+  def friend_ids(ttl=@ttl)
+    get_or_fetch(:friend_ids,ttl)
   end
 
-  def follower_ids
-    get_or_fetch(:follower_ids)
+  def follower_ids(ttl=@ttl)
+    get_or_fetch(:follower_ids,ttl)
   end
 
   private
-    def get_or_fetch(method, predata=nil)
+    def get_or_fetch(method, ttl=@ttl)
       method = method.to_sym
       data = @mongodb[method].find_one(_id: @subject[:id])
-      if data.nil?
+      
+      if data.nil? || expired?(data,ttl)
         puts "CALLED: @twitter.#{method.to_s} for _id: #{@subject[:id]}"
-        data = predata ? predata : @twitter.send(method).to_a
-        @mongodb[method].insert(prepare_data(data))
-        data
+        new_data = @twitter.send(method).to_a
+        
+        if data.nil?
+          @mongodb[method].insert(prepare_insert(new_data))
+        else # data expired
+          @mongodb[method].update({_id: @subject[:id]}, prepare_update(new_data))
+          @mongodb[method].update({_id: @subject[:id]}, {'$set' => { 'metadata.updated_at' => Time.now.to_i }})
+        end
+
+        new_data
       else
-        data['data']
+        (data['data_history'].last)['data']
       end      
+    end
+
+    def expired?(data, ttl)
+      ttl.nil? ? false : (data['metadata']['updated_at'] < (Time.now.to_i - ttl))
     end
 
     def save_user_info(user)
       if @mongodb['user_info'].find_one(_id: user[:id].to_s).nil?
-        id = @mongodb['user_info'].insert(prepare_data(user))
+        id = @mongodb['user_info'].insert(prepare_insert(user))
       end
     end
 
-    def prepare_data(data_hash, id=nil)
+    def prepare_data_element(data_hash)
+      { 
+        created_at: Time.now.to_i, 
+        type: 'raw', # raw | diff
+        data: data_hash
+      }
+    end
+
+    def prepare_insert(data_hash, id=nil)
       {
         _id: id ? id : @subject[:id],
         metadata: {
-          created_at: Time.now,
-          updated_at: Time.now,
-          source: 'mongo_twitter.rb'
+          created_at: Time.now.to_i,
+          updated_at: Time.now.to_i,
+          version: '0.2',
+          source: 'rails'
         },
-        data: data_hash
+        data_history: [prepare_data_element(data_hash)]
+      }
+    end
+
+    def prepare_update(data_hash, id=nil)
+      {
+        '$push' => { 'data_history' => prepare_data_element(data_hash) }
       }
     end
 end

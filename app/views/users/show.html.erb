@@ -57,7 +57,7 @@
   <dt><strong>Username:</strong></dt><dd><%= t.subject[:screen_name] || '-'  %></dd>
   <dt><strong>Description:</strong></dt><dd><%= t.subject[:description] || '-'  %></dd>
   <dt><strong>Favorites:</strong></dt><dd><%= t.subject[:favourites_count] || '-'  %></dd>
-  <dt><strong>Following:</strong></dt><dd><%= t.friend_ids.count || '-'  %></dd>
+  <dt><strong>Following:</strong></dt><dd><%= t.friend_ids(1.minute).count || '-'  %></dd>
   <dt><strong>Followers:</strong></dt><dd><%= t.follower_ids.count || '-'  %></dd>
 </dl>
 
