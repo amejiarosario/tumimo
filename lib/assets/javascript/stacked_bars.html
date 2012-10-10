@@ -1,16 +1,48 @@
 <!DOCTYPE html>
-<html>
- <head>
-  <meta charset="UTF-8">
-  <title>title</title>
-  <style type="text/css">
-   
-  </style>
- </head>
- <body>
-  <script src="d3.v2.js"></script>
-  <script type="text/javascript">
+<meta charset="utf-8">
+<style>/* CSS */</style>
+<body>
+<script src="d3.v2.js"></script>
+<script>
+var data = [
+	{data: '11-Apr-11', followers: 167, following: 215},
+	{data: '15-Apr-11', followers: 176, following: 209},
+	{data: '19-Jul-12', followers: 184, following: 209},
+	{data: '21-Aug-12', followers: 190, following: 215},
+	{data: '4-Oct-12', followers: 189, following: 215},
+	{data: '9-Oct-12', followers: 189, following: 166}
+]
 
-  </script>
- </body>
-</html>
+var width = 500;
+var height = 150;
+
+// svg
+var svg = d3.select('body')
+					.append('svg')
+					.attr('width',width)
+					.attr('height',height);
+
+// chart
+svg.selectAll('rect')
+		.data(data)
+		.enter()
+		.append('rect')
+		.attr('x', function(d,i){return i*22;})
+		.attr('y', function(d,i){return height - d.followers*0.5;})
+		.attr('width',20)
+		.attr('height', function(d,i){return d.followers*0.5;})
+		.attr('fill', function(d){return "rgb(0, 0, " + d.followers + ")"; });
+
+// label
+svg.selectAll('text')
+		.data(data)
+		.enter()
+		.append('text')
+		.text(function(d){return d.followers;})
+		.attr('x',function(d,i){return i*22;})
+		.attr('y',function(d,i){return height - d.followers*0.5 + 15;})
+		.attr("font-family", "sans-serif")
+		.attr("font-size", "10px")
+		.attr("fill", "white");
+
+</script>

@@ -42,7 +42,7 @@
   <dt><strong>Work:</strong></dt><dd><%= "#{u['work'][0]['position']['name']} at #{u['work'][0]['employer']['name']}" || '-'  %></dd>
 </dl>
 
-<b>Did you know that...? </b>
+<b>But, did you know ...? </b>
 <dl class="dl-horizontal">
   <% f = @user.facebook_friends %>
   <dt><strong>Friends Count:</strong></dt><dd><%= f.count %></dd>
@@ -53,14 +53,17 @@
 <hr>
 <b>You already know...</b>
 <dl class="dl-horizontal">
-  <% t = @user.twitter %>
+  <% 
+    t = @user.twitter 
+    t.ttl = 1.day
+  %>
   <dt><strong>Username:</strong></dt><dd><%= t.subject[:screen_name] || '-'  %></dd>
   <dt><strong>Description:</strong></dt><dd><%= t.subject[:description] || '-'  %></dd>
   <dt><strong>Favorites:</strong></dt><dd><%= t.subject[:favourites_count] || '-'  %></dd>
-  <dt><strong>Following:</strong></dt><dd><%= t.friend_ids(1.minute).count || '-'  %></dd>
+  <dt><strong>Following:</strong></dt><dd><%= t.friend_ids.count || '-'  %></dd>
   <dt><strong>Followers:</strong></dt><dd><%= t.follower_ids.count || '-'  %></dd>
 </dl>
 
-<b>Did you know that...? </b>
+<b>But, did you know ...? </b>
 
 
