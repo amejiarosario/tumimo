@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>/* CSS */</style>
+<style>
+	svg {
+		background-color: #ddd;
+	}
+</style>
 <body>
 <script src="d3.v2.js"></script>
 <script>
@@ -14,7 +18,7 @@ var data = [
 ]
 
 var width = 500;
-var height = 150;
+var height = 200;
 
 // svg
 var svg = d3.select('body')
@@ -22,27 +26,64 @@ var svg = d3.select('body')
 					.attr('width',width)
 					.attr('height',height);
 
+
+// Followers
+
+// scale
+var yscale = d3.scale.linear()
+							.domain([0, d3.max(data, function(d){return d.followers+d.following;})])
+							.range([0, height-50]);
+
 // chart
-svg.selectAll('rect')
+svg.selectAll('rect.followers')
 		.data(data)
 		.enter()
 		.append('rect')
+		.attr('class', 'followers')
 		.attr('x', function(d,i){return i*22;})
-		.attr('y', function(d,i){return height - d.followers*0.5;})
+		.attr('y', function(d,i){return height - yscale(d.followers);})
 		.attr('width',20)
-		.attr('height', function(d,i){return d.followers*0.5;})
+		.attr('height', function(d,i){return yscale(d.followers);})
 		.attr('fill', function(d){return "rgb(0, 0, " + d.followers + ")"; });
 
 // label
-svg.selectAll('text')
+svg.selectAll('text.followers')
 		.data(data)
 		.enter()
 		.append('text')
+		.attr('class', 'followers')
 		.text(function(d){return d.followers;})
 		.attr('x',function(d,i){return i*22;})
-		.attr('y',function(d,i){return height - d.followers*0.5 + 15;})
+		.attr('y',function(d,i){return height - yscale(d.followers) + 15;})
 		.attr("font-family", "sans-serif")
 		.attr("font-size", "10px")
 		.attr("fill", "white");
+
+// Following
+
+//chart
+svg.selectAll('rect.following')
+		.data(data)
+		.enter()
+		.append('rect')
+		.attr('class', 'following')
+		.attr('x', function(d,i){return i*22;})
+		.attr('y', function(d,i){return height - yscale(d.following) - yscale(d.followers);})
+		.attr('width',20)
+		.attr('height', function(d,i){return yscale(d.following);})
+		.attr('fill', function(d){return "rgb(" + d.followers + ", 0, 0)"; });
+
+svg.selectAll('text.following')
+		.data(data)
+		.enter()
+		.append('text')
+		.attr('class', 'following')
+		.text(function(d){return d.following;})
+		.attr('x',function(d,i){return i*22;})
+		.attr('y',function(d,i){return height - yscale(d.following) - yscale(d.followers) + 15;})
+		.attr("font-family", "sans-serif")
+		.attr("font-size", "10px")
+		.attr("fill", "white");
+
 
 </script>
