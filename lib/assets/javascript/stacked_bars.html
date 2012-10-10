@@ -4,17 +4,28 @@
 	svg {
 		background-color: #ddd;
 	}
+	.axis path,
+	.axis line {
+	    fill: none;
+	    stroke: black;
+	    shape-rendering: crispEdges;
+	}
+
+	.axis text {
+	    font-family: sans-serif;
+	    font-size: 11px;
+	}	
 </style>
 <body>
 <script src="d3.v2.js"></script>
 <script>
 var data = [
-	{data: '11-Apr-11', followers: 167, following: 215},
-	{data: '15-Apr-11', followers: 176, following: 209},
-	{data: '19-Jul-12', followers: 184, following: 209},
-	{data: '21-Aug-12', followers: 190, following: 215},
-	{data: '4-Oct-12', followers: 189, following: 215},
-	{data: '9-Oct-12', followers: 189, following: 166}
+	{date: '11-Apr-11', followers: 167, following: 215},
+	{date: '15-Apr-11', followers: 176, following: 209},
+	{date: '19-Jul-12', followers: 184, following: 209},
+	{date: '21-Aug-12', followers: 190, following: 215},
+	{date: '4-Oct-12', followers: 189, following: 215},
+	{date: '9-Oct-12', followers: 189, following: 166}
 ]
 
 var width = 500;
@@ -33,6 +44,13 @@ var svg = d3.select('body')
 var yscale = d3.scale.linear()
 							.domain([0, d3.max(data, function(d){return d.followers+d.following;})])
 							.range([0, height-50]);
+
+// var xscale = d3.scale.category20()
+// 							.domain(d3.extent(data, function(d){return d.date;}));
+
+// var xaxis = d3.svg.axis().orient('bottom').scale(xscale);
+// svg.append('g').call(xaxis);
+
 
 // chart
 svg.selectAll('rect.followers')
