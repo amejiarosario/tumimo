@@ -14,11 +14,14 @@
 	.axis text {
 	    font-family: sans-serif;
 	    font-size: 11px;
+      -webkit-transform: rotate(-90deg);
 	}	
 </style>
 <body>
 <script src="d3.v2.js"></script>
 <script>
+"use strict";
+
 var data = [
 	{date: '11-Apr-11', followers: 167, following: 215},
 	{date: '15-Apr-11', followers: 176, following: 209},
@@ -30,6 +33,9 @@ var data = [
 
 var width = 500;
 var height = 200;
+
+var margin_bottom = 20,
+    margin_top = 10;
 
 // svg
 var svg = d3.select('body')
@@ -45,11 +51,22 @@ var yscale = d3.scale.linear()
 							.domain([0, d3.max(data, function(d){return d.followers+d.following;})])
 							.range([0, height-50]);
 
+
+var xscale = d3.scale.ordinal()
+              .domain(data.map(function(x){return x.date;}))
+              .rangeBands([0,data.length*22]);
+
 // var xscale = d3.scale.category20()
 // 							.domain(d3.extent(data, function(d){return d.date;}));
 
-// var xaxis = d3.svg.axis().orient('bottom').scale(xscale);
-// svg.append('g').call(xaxis);
+var xaxis = d3.svg.axis()
+              .scale(xscale)
+              .orient('bottom');
+
+svg.append('g')
+  .attr("class", "axis")
+  .attr("transform", "translate(0," + (height - 20) + ")")
+  .call(xaxis);
 
 
 // chart
@@ -59,7 +76,7 @@ svg.selectAll('rect.followers')
 		.append('rect')
 		.attr('class', 'followers')
 		.attr('x', function(d,i){return i*22;})
-		.attr('y', function(d,i){return height - yscale(d.followers);})
+		.attr('y', function(d,i){return height - yscale(d.followers) - margin_bottom;})
 		.attr('width',20)
 		.attr('height', function(d,i){return yscale(d.followers);})
 		.attr('fill', function(d){return "rgb(0, 0, " + d.followers + ")"; });
@@ -72,7 +89,7 @@ svg.selectAll('text.followers')
 		.attr('class', 'followers')
 		.text(function(d){return d.followers;})
 		.attr('x',function(d,i){return i*22;})
-		.attr('y',function(d,i){return height - yscale(d.followers) + 15;})
+		.attr('y',function(d,i){return height - yscale(d.followers) + 15 - margin_bottom;})
 		.attr("font-family", "sans-serif")
 		.attr("font-size", "10px")
 		.attr("fill", "white");
@@ -86,7 +103,7 @@ svg.selectAll('rect.following')
 		.append('rect')
 		.attr('class', 'following')
 		.attr('x', function(d,i){return i*22;})
-		.attr('y', function(d,i){return height - yscale(d.following) - yscale(d.followers);})
+		.attr('y', function(d,i){return height - yscale(d.following) - yscale(d.followers) - margin_bottom;})
 		.attr('width',20)
 		.attr('height', function(d,i){return yscale(d.following);})
 		.attr('fill', function(d){return "rgb(" + d.followers + ", 0, 0)"; });
@@ -98,7 +115,7 @@ svg.selectAll('text.following')
 		.attr('class', 'following')
 		.text(function(d){return d.following;})
 		.attr('x',function(d,i){return i*22;})
-		.attr('y',function(d,i){return height - yscale(d.following) - yscale(d.followers) + 15;})
+		.attr('y',function(d,i){return height - yscale(d.following) - yscale(d.followers) + 15 - margin_bottom;})
 		.attr("font-family", "sans-serif")
 		.attr("font-size", "10px")
 		.attr("fill", "white");

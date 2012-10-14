@@ -56,7 +56,7 @@ class MongoTwitter
     end
 
     def expired?(data, ttl)
-      ttl.nil? ? false : (data['metadata']['updated_at'] < (Time.now.to_i - ttl))
+      ttl.nil? ? false : (data['metadata']['updated_at'].to_i < (Time.now.to_i - ttl))
     end
 
     def save_user_info(user)

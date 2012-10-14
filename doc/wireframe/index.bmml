@@ -1,0 +1,9 @@
+<mockup version="1.0" skin="sketch" measuredW="870" measuredH="628" mockupW="800" mockupH="600">
+  <controls>
+    <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="60" y="18" w="800" h="600" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Tumimo%0Ahttp%3A//tumimo.com</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
