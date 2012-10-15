@@ -1,0 +1,12 @@
+<% content_for :sidebar do %>
+	<div class="well sidebar-nav">
+	  <ul class="nav nav-list">
+	    <li class="nav-header"><%= current_user.name %></li>
+	    <li class="active"><%= link_to 'Facebook', analysis_facebook_path %></li>
+	    <li><%= link_to 'Twitter', '#'  %></li>
+	  </ul>
+	</div><!--/.well -->
+<% end %>
+
+<h1>Analysis#index</h1>
+<p>Find me in app/views/analysis/index.html.erb</p>

@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
 	has_many :authentications, dependent: :destroy
+	
 	DATA = "uid, name, first_name, last_name, affiliations, timezone, birthday_date, birthday, devices, sex, hometown_location, relationship_status, significant_other_id, current_location, work, education, languages, likes_count, wall_count, friend_count, mutual_friend_count"
 	def create_authentication(oauth)
 		authentications.create!(

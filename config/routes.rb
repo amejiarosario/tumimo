@@ -1,4 +1,9 @@
 Tumimo::Application.routes.draw do
+  match 'sign_in' => "sign_in#index"
+
+  get "analysis/index"
+  get 'analysis/facebook'
+
   resources :users
 
   get "home/index"
@@ -11,5 +16,5 @@ Tumimo::Application.routes.draw do
   match '/auth/:provider/callback' => 'sessions#create'
   match 'signout', to: 'sessions#destroy', as: 'signout'
 
-  root :to => 'home#index'
+  root :to => 'analysis#index'
 end

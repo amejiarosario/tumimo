@@ -15,7 +15,8 @@
     <%= stylesheet_link_tag "application", :media => "all" %>
   </head>
   <body>
-
+    
+    <!-- Toolbar -->
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -24,9 +25,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Tumimo</a>
+          <a class="brand" href="<%= root_path %>">Tumimo</a>
           <div class="container-fluid nav-collapse">
             <ul class="nav">
+              <li><%= link_to 'Analysis', '#' %></li>
+              <li><%= link_to 'Influence', '#' %></li>
+              <li class="divider-vertical"></li>
               <li><%= link_to "Users", users_path  %></li>
               <li><%= link_to "Authentications", authentications_path  %></li>
             </ul>
@@ -52,18 +56,14 @@
         </div>
       </div>
     </div>
+    <!-- /toolbar -->
 
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span3">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-              <li class="nav-header">Sign in</li>
-              <li><%= link_to "Twitter", '/auth/twitter'  %></li>
-              <li><%= link_to "Facebook", '/auth/facebook' %></li>
-              <li><%= link_to "Google", '#' %></li>
-            </ul>
-          </div><!--/.well -->
+          <% if content_for? :sidebar %>
+            <%= yield :sidebar %>
+          <% end %>
         </div><!--/span-->
         <div class="span9">
 					<% if notice || flash.key?(:notice) %>

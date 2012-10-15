@@ -1,0 +1,20 @@
+<section id="personal_information">
+	<div class="page-header"><h1>Basic Information</h1></div>
+	<table class="table table-hover table-condensed table-striped table-bordered">
+		<tbody>
+			<% u = current_user.facebook.get_object('me') %>
+			<tr>
+				<th>Name</th>
+				<td><%= u['name'] || '-' %></td>
+			</tr>
+			<tr>
+				<th>Hometown</th>
+				<td><%= u['hometown']['name'] || '-'  %></td>
+			</tr>
+			<tr>
+				<th>Work</th>
+				<td><%= "#{u['work'][0]['position']['name']} at #{u['work'][0]['employer']['name']}" || '-'  %></td>
+			</tr>
+		</tbody>
+	</table>
+</section>
