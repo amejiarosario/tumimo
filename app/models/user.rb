@@ -1,7 +1,6 @@
 class User < ActiveRecord::Base
 	has_many :authentications, dependent: :destroy
 	
-	DATA = "uid, name, first_name, last_name, affiliations, timezone, birthday_date, birthday, devices, sex, hometown_location, relationship_status, significant_other_id, current_location, work, education, languages, likes_count, wall_count, friend_count, mutual_friend_count"
 	def create_authentication(oauth)
 		authentications.create!(
 			provider: oauth['provider'], 
@@ -12,25 +11,13 @@ class User < ActiveRecord::Base
 			data: oauth.to_json.to_s
 		)
 	end
-
+	
 	def facebook
 		unless @facebook
-			oauth_token = authentications.where(provider: 'facebook').first.oauth_token
-			@facebook = Koala::Facebook::API.new(oauth_token)
+			fb_oauth = authentications.where(provider: 'facebook').first
+			@facebook = MongoFacebook.new(fb_oauth.oauth_token, fb_oauth.oauth_secret)
 		end
 		@facebook
-	end
-
-	def facebook_friends
-		@fb_friends ||= facebook.get_connections('me', 'friends')
-	end
-
-	# FIXME: run in the background, takes couple of minutes to finish
-	def facebook_friends_data(data=DATA)
-		unless @fb_friends_data
-			ids = facebook_friends.map { |e| e['id'] }.join(', ')
-			@fb_friends_data = facebook.fql_query("select #{data} from user where uid in (#{ids})")
-		end
 	end
 
 	def twitter

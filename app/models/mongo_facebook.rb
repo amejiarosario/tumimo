@@ -1,53 +1,49 @@
-class MongoTwitter
+class MongoFacebook
   attr_reader :mongodb
-  attr_reader :twitter
+  attr_reader :facebook
   attr_reader :subject
   attr_accessor :ttl
 
   def initialize(oauth_token, oauth_token_secret,
-                 consumer_key = ENV['TUMIMO_TWITTER_KEY'], 
-                 consumer_secret = ENV['TUMIMO_TWITTER_SECRET'],
+                 consumer_key = ENV['TUMIMO_FACEBOOK_KEY'], 
+                 consumer_secret = ENV['TUMIMO_FACEBOOK_SECRET'],
                  mongo_server='localhost', mongo_port=27017)
 
     mongo_connection = Mongo::Connection.new(mongo_server,mongo_port)
-    @mongodb = mongo_connection.db 'twitter'
+    @mongodb = mongo_connection.db 'facebook'
 
-    @twitter =  Twitter::Client.new(
-      :consumer_key => consumer_key,
-      :consumer_secret => consumer_secret,
-      :oauth_token => oauth_token,
-      :oauth_token_secret => oauth_token_secret
-    )
+    @facebook = Koala::Facebook::API.new(oauth_token)
 
     # FIXME: get it from oauth token instead.
-    @subject = @twitter.current_user.to_hash
+    @subject = @facebook.get_object('me') 
     save_user_info(@subject)
 
     @ttl=nil
   end
 
-  def friend_ids(ttl=@ttl)
-    get_or_fetch(:friend_ids,ttl)
+  def uid
+    @subject['id']
   end
 
-  def follower_ids(ttl=@ttl)
-    get_or_fetch(:follower_ids,ttl)
+  def friend_ids(ttl=@ttl)
+    # ids = facebook_friends.map { |e| e['id'] }.join(', ')
+    get_or_fetch(:get_connections,:me,:friends,ttl)
   end
 
   private
-    def get_or_fetch(method, ttl=@ttl)
-      method = method.to_sym
-      data = @mongodb[method].find_one(_id: @subject[:id])
+    def get_or_fetch(method, subject, action, ttl=@ttl)
+      mongoname = "#{method}__#{subject}__#{action}"
+      data = @mongodb[mongoname].find_one(_id: uid)
       
       if data.nil? || expired?(data,ttl)
-        puts "**** CALLED: @twitter.#{method.to_s} for _id: #{@subject[:id]} ****"
-        new_data = @twitter.send(method).to_a
+        puts "***** CALLED: @facebook.#{method.to_s} for _id: #{uid} ****"
+        new_data = @facebook.send(method, subject, action).to_a
         
         if data.nil?
-          @mongodb[method].insert(prepare_insert(new_data))
+          @mongodb[mongoname].insert(prepare_insert(new_data))
         else # data expired
-          @mongodb[method].update({_id: @subject[:id]}, prepare_update(new_data))
-          @mongodb[method].update({_id: @subject[:id]}, {'$set' => { 'metadata.updated_at' => Time.now.to_i }})
+          @mongodb[mongoname].update({_id: uid}, prepare_update(new_data))
+          @mongodb[mongoname].update({_id: uid}, {'$set' => { 'metadata.updated_at' => Time.now.to_i }})
         end
 
         new_data
@@ -61,7 +57,7 @@ class MongoTwitter
     end
 
     def save_user_info(user)
-      if @mongodb['user_info'].find_one(_id: user[:id].to_s).nil?
+      if @mongodb['user_info'].find_one(_id: user['id'].to_s).nil?
         id = @mongodb['user_info'].insert(prepare_insert(user))
       end
     end
@@ -76,7 +72,7 @@ class MongoTwitter
 
     def prepare_insert(data_hash, id=nil)
       {
-        _id: id ? id : @subject[:id],
+        _id: id ? id : uid,
         metadata: {
           created_at: Time.now.to_i,
           updated_at: Time.now.to_i,
