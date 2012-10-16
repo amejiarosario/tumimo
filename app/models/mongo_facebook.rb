@@ -4,7 +4,9 @@ class MongoFacebook
   attr_reader :subject
   attr_accessor :ttl
 
-  def initialize(oauth_token, oauth_token_secret,
+  # TODO: implemenet md5checksum for FQL 
+
+  def initialize(oauth_token, oauth_token_secret=nil,
                  consumer_key = ENV['TUMIMO_FACEBOOK_KEY'], 
                  consumer_secret = ENV['TUMIMO_FACEBOOK_SECRET'],
                  mongo_server='localhost', mongo_port=27017)
@@ -30,14 +32,21 @@ class MongoFacebook
     get_or_fetch(:get_connections,:me,:friends,ttl)
   end
 
+  def user_data(ids, ttl=@ttl)
+    query = ""
+    get_or_fetch(:fql_query,query,ttl)
+  end
+
   private
     def get_or_fetch(method, subject, action, ttl=@ttl)
       mongoname = "#{method}__#{subject}__#{action}"
+      args = [method, subject, action].compact
+      
       data = @mongodb[mongoname].find_one(_id: uid)
       
       if data.nil? || expired?(data,ttl)
         puts "***** CALLED: @facebook.#{method.to_s} for _id: #{uid} ****"
-        new_data = @facebook.send(method, subject, action).to_a
+        new_data = @facebook.send(*args).to_a
         
         if data.nil?
           @mongodb[mongoname].insert(prepare_insert(new_data))

@@ -1,20 +1,69 @@
+<% u = current_user.facebook.facebook.get_object('me') %>
+
 <section id="personal_information">
-	<div class="page-header"><h1>Basic Information</h1></div>
+	<div class="page-header"><h1>About Yourself</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
 		<tbody>
-			<% u = current_user.facebook.get_object('me') %>
 			<tr>
-				<th>Name</th>
+				<td>Name</td>
 				<td><%= u['name'] || '-' %></td>
 			</tr>
 			<tr>
-				<th>Hometown</th>
+				<td>Birthday</td>
+				<td><%= u['birthday'] || '-'  %></td>
+			</tr>			
+			<tr>
+				<td>Hometown</td>
 				<td><%= u['hometown']['name'] || '-'  %></td>
 			</tr>
 			<tr>
-				<th>Work</th>
+				<td>Work</td>
 				<td><%= "#{u['work'][0]['position']['name']} at #{u['work'][0]['employer']['name']}" || '-'  %></td>
 			</tr>
+			<tr>
+				<td>Opened Facebook on</td>
+				<td><%= "#{}" || '-'  %></td>
+			</tr>			
 		</tbody>
 	</table>
+</section>
+
+<section id="personal_information">
+	<div class="page-header"><h1>Your Posts</h1></div>
+	<table class="table table-hover table-condensed table-striped table-bordered">
+		<tbody>
+			<tr>
+				<td>Total Wall Posts</td>
+				<td><%= "#{}" || '-'  %></td>
+			</tr>
+			<tr>
+				<td>10 Top Most Liked Posts</td>
+				<td><%= "#{}" || '-'  %></td>
+			</tr>
+			<tr>
+				<td>10 Top Most Commented Posts</td>
+				<td><%= "#{}" || '-'  %></td>
+			</tr>			
+		</tbody>
+	</table>
+</section>
+
+<section id="friends_information">
+	<div class="page-header"><h1>Friends</h1></div>
+	<table class="table table-hover table-condensed table-striped table-bordered">
+		<tbody>
+			<tr>
+				<td>Friends Count</td>
+				<td><%= "#{}" || '-' %></td>
+			</tr>
+			<tr>
+				<td>Groups</td>
+				<td><%= "#{}" || '-'  %></td>
+			</tr>				
+		</tbody>
+	</table>
+	<div>Graph</div>
+	<div>History</div>
+	<div>Locations (where are your friends now?)</div>
+	<div>Single Friends</div>
 </section>
