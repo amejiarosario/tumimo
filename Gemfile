@@ -51,3 +51,6 @@ gem 'bson_ext'
 gem 'twitter'
 gem 'koala'
 gem 'pry-rails', :group => :development
+group :test, :development do
+  gem "rspec-rails", "~> 2.0"
+end
