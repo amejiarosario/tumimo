@@ -1,5 +1,6 @@
-<% u = current_user.facebook.facebook.get_object('me') %>
+<% fb = current_user.facebook %>
 
+<% u = fb.subject %>
 <section id="personal_information">
 	<div class="page-header"><h1>About Yourself</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
@@ -23,24 +24,51 @@
 			<tr>
 				<td>Opened Facebook on</td>
 				<td><%= "#{}" || '-'  %></td>
+				<!-- http://stackoverflow.com/questions/7332957/determine-when-user-created-facebook-account -->
+				<!-- November 3, 2007 -->
 			</tr>			
 		</tbody>
 	</table>
 </section>
 
-<section id="personal_information">
+<% p = fb.user_feeds %>
+<section id="posts_information">
+<!-- http://developers.facebook.com/docs/reference/api/post/ -->
+<!-- https://graph.facebook.com/me/feed -->
+<!-- 
+counting rows:
+http://blogs.x2line.com/al/archive/2007/10/07/3287.aspx
+SELECT '' 
+  FROM user 
+ WHERE uid IN (SELECT uid2 
+                 FROM friend 
+                WHERE uid1 = USERID)
+   AND has_added_app = 1
+
+
+SELECT post_id, type, message,description, permalink 
+FROM stream 
+
+WHERE 
+source_id= me() and actor_id = me() 
+and (message != "")
+and created_time < 1285891200 
+LIMIT 5000
+ -->
 	<div class="page-header"><h1>Your Posts</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
 		<tbody>
 			<tr>
 				<td>Total Wall Posts</td>
-				<td><%= "#{}" || '-'  %></td>
+				<td><%= "#{p.count}" || '-'  %></td>
 			</tr>
 			<tr>
+				<!-- f.map{|t| t.try(:[], 'likes').try(:[],'count')}.compact -->
 				<td>10 Top Most Liked Posts</td>
 				<td><%= "#{}" || '-'  %></td>
 			</tr>
 			<tr>
+				<!-- f.map{|t| [t.try(:[], 'comments').try(:[],'count'), t['id']]}.compact.sort -->
 				<td>10 Top Most Commented Posts</td>
 				<td><%= "#{}" || '-'  %></td>
 			</tr>			
