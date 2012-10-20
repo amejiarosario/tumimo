@@ -12,19 +12,19 @@ class User < ActiveRecord::Base
 		)
 	end
 	
-	def facebook
-		unless @facebook
+	def mfb
+		unless @mfb
 			fb_oauth = authentications.where(provider: 'facebook').first
-			@facebook = MongoFacebook.new(fb_oauth.oauth_token, fb_oauth.oauth_secret)
+			@mfb = MongoFacebook.new(fb_oauth.oauth_token, fb_oauth.oauth_secret)
 		end
-		@facebook
+		@mfb
 	end
 
-	def twitter
-		unless @twitter
+	def mtw
+		unless @mtw
 			tw_oauth = authentications.where(provider: 'twitter').first
-			@twitter = MongoTwitter.new(tw_oauth.oauth_token, tw_oauth.oauth_secret)
+			@mtw = MongoTwitter.new(tw_oauth.oauth_token, tw_oauth.oauth_secret)
 		end
-		@twitter
+		@mtw
 	end
 end
