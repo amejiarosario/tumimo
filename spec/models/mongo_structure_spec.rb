@@ -1,3 +1,4 @@
+require 'vcr_helper'
 require_relative '../../app/models/mongo_structure'
 
 describe MongoStructure do

@@ -5,7 +5,7 @@ class MongoStructure
   end
 
   def insert_data(collection_name, data)
-    @db
+    @db[collection_name].insert(metadata.merge({data: data}))
   end
 
   private
@@ -27,5 +27,4 @@ class MongoStructure
         next_cursor: ''
       }
     end
-
 end

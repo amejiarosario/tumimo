@@ -54,3 +54,5 @@ gem 'pry-rails', :group => :development
 gem "rspec-rails", :group => [:development, :test]
 gem "ZenTest"
 gem "autotest-rails"
+gem 'vcr', group: :test
+gem 'fakeweb', group: :test
