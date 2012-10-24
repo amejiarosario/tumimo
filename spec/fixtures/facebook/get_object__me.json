@@ -1,0 +1,121 @@
+{"id":"895685163",
+ "name":"Adrian Mejia",
+ "first_name":"Adrian",
+ "last_name":"Mejia",
+ "link":"http://www.facebook.com/amejiarosario",
+ "username":"amejiarosario",
+ "birthday":"12/10/1986",
+ "hometown":
+    {"id":"110423385653396",
+     "name":"Santo Domingo, Dominican Republic"},
+ "location":
+    {"id":"106003956105810",
+     "name":"Boston, Massachusetts"},
+ "work":[
+    {"employer":
+        {"id":"90588496017",
+         "name":"ADTRAN, Inc."},
+     "location":
+        {"id":"108271205861902",
+         "name":"Burlington, Massachusetts"},
+     "position":
+        {"id":"109542932398298",
+         "name":"Software Engineer"},
+     "start_date":"2012-06"},
+    {"employer":
+        {"id":"103999432971368",
+         "name":"Vicor Corporation"},
+     "location":
+        {"id":"108063275880868",
+         "name":"Andover, Massachusetts"},
+     "position":
+        {"id":"109542932398298",
+         "name":"Software Engineer"},
+     "start_date":"2012-03",
+     "end_date":"2012-06"},
+    {"employer":
+        {"id":"103766552995866",
+         "name":"Johnson & Johnson"},
+     "position":
+        {"id":"109542932398298",
+         "name":"Software Engineer"}},
+    {"employer":
+        {"id":"107185725981171",
+         "name":"Banco Popular Dominicano"}}],
+ "education":[
+    {"school":
+        {"id":"112097925474504",
+         "name":"CELP"},
+     "year":
+        {"id":"113125125403208",
+         "name":"2004"},
+     "type":"High School"},
+    {"school":
+        {"id":"213583022046560",
+         "name":"colegio nuestra señora de la paz"},
+     "type":"High School"},
+    {"school":
+        {"id":"108125709220964",
+         "name":"Instituto Tecnológico de Santo Domintgo"},
+     "year":
+        {"id":"113125125403208",
+         "name":"2004"},
+     "type":"College"},
+    {"school":
+        {"id":"111484805536877",
+         "name":"Instituto Tecnologico de Santo Domingo"},
+     "year":
+        {"id":"113125125403208",
+         "name":"2004"},
+     "type":"College"},
+    {"school":
+        {"id":"110301118999122",
+         "name":"Instituto Tecnológico de Santo Domingo"},
+     "year":
+        {"id":"113125125403208",
+         "name":"2004"},
+     "concentration":[
+        {"id":"191531470867188",
+         "name":"Electronic Engineering and Telecommunications"}],
+     "type":"College"},
+    {"school":
+        {"id":"110916468935758",
+         "name":"RIT"},
+     "degree":
+        {"id":"185793298126960",
+         "name":"Master of Science in Software Engineering"},
+     "year":
+        {"id":"118118634930920",
+         "name":"2012"},
+     "type":"Graduate School"},
+    {"school":
+        {"id":"12355161929",
+         "name":"Rochester Institute of Technology"},
+     "year":
+        {"id":"118118634930920",
+         "name":"2012"},
+     "type":"College",
+     "classes":[
+        {"id":"205692752845513",
+         "name":"Theory of Computer Algorithms",
+         "with":[
+            {"id":"582462028",
+             "name":"Rushabh Pasad"}],
+         "from":
+            {"id":"582462028",
+             "name":"Rushabh Pasad"}}]}],
+ "gender":"male",
+ "interested_in":["female"],
+ "relationship_status":"Single",
+ "religion":"Christianity",
+ "email":"adriansky@gmail.com",
+ "website":"http://www.adrianmejia.com",
+ "timezone":-4,
+ "locale":"en_US",
+ "languages":[
+    {"id":"110343528993409",
+     "name":"Spanish"},
+    {"id":"106059522759137",
+     "name":"English"}],
+ "verified":true,
+ "updated_time":"2012-10-17T01:47:30+0000"}

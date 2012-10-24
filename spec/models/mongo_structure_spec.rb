@@ -1,7 +1,7 @@
 require 'vcr_helper'
-require_relative '../../app/models/mongo_structure'
+require_relative '../../app/models/data_persistance'
 
-describe MongoStructure do
+describe DataPersistance do
 	context 'versioned data'
 	context 'feeds data (posts, tweets)'
 	context 'historical data (friends list)'  

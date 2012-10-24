@@ -1,16 +1,33 @@
-class MongoStructure
+class DataPersistance
+  attr_accessor :db
   def initialize(database_name, port=27017, server='localhost')
     conn = Mongo::Connection.new(server,port)
     @db = conn.db database_name.to_s
   end
 
-  def insert_data(collection_name, data)
-    @db[collection_name].insert(metadata.merge({data: data}))
+  # Checks if the data already exists, if not retrive the data.
+  def cached(collection_name, uid, cached_flag=false, &block)
+    cached = true
+    unless data = db.collection(collection_name).find_one(_id: uid)
+      data = block.call
+      cached = false
+      insert_data(collection_name,uid,data)
+    end
+    data = data['data'] || data
+    cached_flag ? [cached, data] : data
+  end
+
+  def insert_data(collection_name, uid, data)
+    db.collection(collection_name).insert(
+      {_id: uid}.merge(
+      metadata.merge(
+      {data: data}))
+    )
   end
 
   private
     
-    # This method provides information about versioning and data type
+    # Provides information about versioning and data type
     #
     # data_type: [:versioned, :diff, :history, :feed]
     #   * feed: large amount of data that never changes, but always have a new chunk periodically. The old data 
