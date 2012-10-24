@@ -15,4 +15,10 @@ class MongoFacebook
       facebook.get_object 'me'
     end
   end
+
+  def friend_ids(cached_flag=false)
+    data.cached 'get_connections__me_friends', uid, cached_flag do
+      facebook.get_connections 'me', 'friends'
+    end
+  end
 end

@@ -13,7 +13,7 @@ class DataPersistance
       cached = false
       insert_data(collection_name,uid,data)
     end
-    data = data['data'] || data
+    data = cached ? data['data'] : data
     cached_flag ? [cached, data] : data
   end
 

@@ -20,7 +20,7 @@ describe MongoFacebook do
 
 	before :each do
 		clean_mongo
-		@access_token = 'AAACEdEose0cBALaHQ0Ot5BeswsnIZBogZA96ZA0A1IGMe0qjcxEuZBJxh1HxeZCNmJ75tAn4wmZCFuK1ZCX1ZCAojuTZArXnUDoQGWBcufJlJOAZDZD' # https://developers.facebook.com/tools/explorer
+		@access_token = 'AAACEdEose0cBAJuDHyZBBQ6IiF96pQurvzXbHQvhKbc41I6kRUsG9O2j4Qv0B9MBZCFBHJj2ZCIX7GCPnmZADpvQhPzKizU7Kqs5gXUMEgZDZD' # https://developers.facebook.com/tools/explorer
 		@uid = '895685163'
 		@mfb = MongoFacebook.new(@uid, @access_token)
 		@mfb.data = DataPersistance.new database_name
@@ -54,8 +54,21 @@ describe MongoFacebook do
 			end
 		end
 	end
-	context "friends" do
-		it "should get friend count from API" 
-		it "should have cached the data"
+
+	context "friends history" do
+		it "should get friend count from API" do
+			VCR.use_cassette 'facebook/get_connections__me_friends_1583' do
+				friend_ids = @mfb.friend_ids
+				friend_ids.count.should be 1583
+				friend_ids.select{|t| t['name'] =~ /Esther\ Brown/}.count.should be 1
+				# test cache
+				is_cached, cache = @mfb.friend_ids(true)
+				is_cached.should be true
+				cache.should == friend_ids
+			end
+		end
+
+		it "detect when new friends :) "
+		it "detects when friends unfriend :( "
 	end
 end

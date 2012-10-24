@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://graph.facebook.com/me?access_token=AAACEdEose0cBALaHQ0Ot5BeswsnIZBogZA96ZA0A1IGMe0qjcxEuZBJxh1HxeZCNmJ75tAn4wmZCFuK1ZCX1ZCAojuTZArXnUDoQGWBcufJlJOAZDZD
+    uri: https://graph.facebook.com/me?access_token=AAACEdEose0cBAJuDHyZBBQ6IiF96pQurvzXbHQvhKbc41I6kRUsG9O2j4Qv0B9MBZCFBHJj2ZCIX7GCPnmZADpvQhPzKizU7Kqs5gXUMEgZDZD
     body:
       encoding: US-ASCII
       string: ''
@@ -42,16 +42,16 @@ http_interactions:
         bm8tY2FjaGU=
       !binary "eC1mYi1yZXY=":
       - !binary |-
-        NjUyOTQ2
+        NjUzODUw
       !binary "Y29udGVudC1lbmNvZGluZw==":
       - !binary |-
         Z3ppcA==
       !binary "eC1mYi1kZWJ1Zw==":
       - !binary |-
-        cXhEa1VxR1BqeW9HaXEveWtwTTRScmxwa2F6OXFsbUN5aUlXTE5OdzZnVT0=
+        OExud3BLbzNGWm90OFJHSmZHd05xR05jSWxLaUptdnFMU1RkTVZFV1FEbz0=
       !binary "ZGF0ZQ==":
       - !binary |-
-        U3VuLCAyMSBPY3QgMjAxMiAwMDowMzoxMSBHTVQ=
+        V2VkLCAyNCBPY3QgMjAxMiAwMjoyOTo0MSBHTVQ=
       !binary "Y29ubmVjdGlvbg==":
       - !binary |-
         Y2xvc2U=
@@ -88,5 +88,5 @@ http_interactions:
         6W+MRXP0ZAoAAA==
     http_version: !binary |-
       MS4x
-  recorded_at: Sun, 21 Oct 2012 00:03:12 GMT
+  recorded_at: Wed, 24 Oct 2012 02:29:41 GMT
 recorded_with: VCR 2.2.5
