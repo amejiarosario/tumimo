@@ -21,10 +21,9 @@ describe DataPersistance do
 		end		
 	end	
 
-	context 'data expired' do
+	context 'expired data checking' do
 		@week = 604800
-		@week_ago = Time.now.to_i - @week
-		@mdata = {metadata: {updated_at: @week_ago}}
+		let(:mdata){ {metadata: {updated_at: Time.now.to_i - 604800}} }
 
 		it "expired if data is nil" do
 			@persistance.expired?(nil, 1).should be true
@@ -37,15 +36,15 @@ describe DataPersistance do
 		{'zero' => 0, 
 		 'less than week' => (@week - 1), 
 		 'exactly a week' => @week }.each do |k,v|
-				it "expired if data was updated a week ago and ttl is #{k} " do
-					@persistance.expired?(@mdata, v)
+				it "expired if data was updated a week ago and ttl is #{k} (#{v.inspect})" do
+					@persistance.expired?(mdata, v).should be true
 				end
 		end
 
 		{'nil' => nil, 
 		 'more than week' => @week+1}.each do |k,v|
-				it "expired if data was updated a week ago and ttl is #{k} " do
-					@persistance.expired?(@mdata, v)
+				it "NOT expired if data was updated a week ago and ttl is #{k} (#{v.inspect})" do
+					@persistance.expired?(mdata, v).should be false
 				end
 		end
 	end

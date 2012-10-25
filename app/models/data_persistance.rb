@@ -41,9 +41,12 @@ class DataPersistance
   #   * updated_at + ttl <= Time.now.to_i
   # if ttl is nil it wont check the updated_at
   def expired?(data, ttl)
+    # puts "* expired?::data.nil?"
     return true if data.nil?
+    # puts "** expired?::data[:metadata][:updated_at] => #{data[:metadata][:updated_at].inspect}"
     return true unless data && data[:metadata] && data[:metadata][:updated_at]
     updated_at = data[:metadata][:updated_at].to_i
+    # puts "*** expired?::ttl.nil? | ttl=#{ttl}; updated_at = #{updated_at}"
     ttl.nil? ? false : (updated_at + ttl.to_i <= Time.now.to_i)
   end 
 
