@@ -23,7 +23,8 @@ describe DataPersistance do
 
 	context 'expired data checking' do
 		@week = 604800
-		let(:mdata){ {metadata: {updated_at: Time.now.to_i - 604800}} }
+		let(:mdata){ {'metadata' => {'updated_at' => Time.now.to_i - 604800}} }
+		let(:jdata){ {'metadata' => {'updated_at' => Time.now.to_i}} }
 
 		it "expired if data is nil" do
 			@persistance.expired?(nil, 1).should be true
@@ -47,44 +48,56 @@ describe DataPersistance do
 					@persistance.expired?(mdata, v).should be false
 				end
 		end
+		
+		{'nil' => nil, 
+		 'more than week' => @week+1}.each do |k,v|
+				it "NOT expired if data was updated just now and ttl is #{k} (#{v.inspect})" do
+					@persistance.expired?(jdata, v).should be false
+				end
+		end		
 	end
 
-	context 'data and expirations' do
+	context 'data caching when necesary based on ttl' do
 		before :each do
+			@week = 604800
 			@data = {a: 1, b:2, c:3}
 			@is_cached, @mongo_data = @persistance.cached('test',123456, true) do
 				@data
 			end
 			@time = Time.now.to_i		
+			@is_cached.should be false
 		end
 
 		it 'contains the update_at data' do
-			@is_cached.should be false
-			@mongo_data[:data].should == @data
-			@mongo_data[:metadata][:updated_at].should be_within(1.0).of(@time)
+			@mongo_data['data'].should == @data
+			@mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)
+			@is_cached, @mongo_data = @persistance.cached('test',123456, true) do
+				@data
+			end
+			@is_cached.should be true
 		end
 
-		{'nil' => nil, 'in the future' => Time.now.to_i+1 }.each do |k,v|
+		{'nil' => nil, 'a week' => 604800 }.each do |k,v|
 			it "should not renew cached if ttl is #{k} (#{v})" do
 				new_data = @data.merge({d: 4})
 				is_cached, mongo_data = @persistance.cached('test',123456, true, v) do
 					new_data
 				end
 				is_cached.should be true
-				@mongo_data[:data].should == @data
-				@mongo_data[:metadata][:updated_at].should be_within(1.0).of(@time)			
+				@mongo_data['data'].should == @data
+				@mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)			
 			end
 		end
 
-		{'now' => Time.now.to_i, 'in the past' => Time.now.to_i-1, 'zero' => 0 }.each do |k,v|
+		{'in the past' => -1, 'zero' => 0 }.each do |k,v|
 			it "should renew cached if ttl is #{k} (#{v})" do
 				new_data = @data.merge({d: 4})
 				is_cached, mongo_data = @persistance.cached('test',123456, true, v) do
 					new_data
 				end
 				is_cached.should be true
-				@mongo_data[:data].should == new_data
-				@mongo_data[:metadata][:updated_at].should be_within(1.0).of(@time)
+				@mongo_data['data'].should == new_data
+				@mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)
 			end
 		end
 	end
