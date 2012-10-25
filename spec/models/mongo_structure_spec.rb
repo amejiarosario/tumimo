@@ -60,8 +60,10 @@ describe DataPersistance do
 	context 'data caching when necesary based on ttl' do
 		before :each do
 			@week = 604800
-			@data = {a: 1, b:2, c:3}
-			@is_cached, @mongo_data = @persistance.cached('test',123456, true) do
+			@data = {'a' => 1, 'b' => 2, 'c' => 3}
+			@new_data = @data.merge({'d' => 4})
+			@_id = 12345678
+			@is_cached, @mongo_data = @persistance.cached('test',@_id, true) do
 				@data
 			end
 			@time = Time.now.to_i		
@@ -71,33 +73,32 @@ describe DataPersistance do
 		it 'contains the update_at data' do
 			@mongo_data['data'].should == @data
 			@mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)
-			@is_cached, @mongo_data = @persistance.cached('test',123456, true) do
+			@is_cached, new_mongo_data = @persistance.cached('test',@_id, true) do
 				@data
 			end
 			@is_cached.should be true
+			new_mongo_data = @mongo_data
 		end
 
 		{'nil' => nil, 'a week' => 604800 }.each do |k,v|
 			it "should not renew cached if ttl is #{k} (#{v})" do
-				new_data = @data.merge({d: 4})
-				is_cached, mongo_data = @persistance.cached('test',123456, true, v) do
-					new_data
+				is_cached, new_mongo_data = @persistance.cached('test',@_id, true, v) do
+					@new_data
 				end
 				is_cached.should be true
-				@mongo_data['data'].should == @data
-				@mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)			
+				new_mongo_data['data'].should == @data
+				new_mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)			
 			end
 		end
 
 		{'in the past' => -1, 'zero' => 0 }.each do |k,v|
 			it "should renew cached if ttl is #{k} (#{v})" do
-				new_data = @data.merge({d: 4})
-				is_cached, mongo_data = @persistance.cached('test',123456, true, v) do
-					new_data
+				is_cached, new_mongo_data = @persistance.cached('test',@_id, true, v) do
+					@new_data
 				end
-				is_cached.should be true
-				@mongo_data['data'].should == new_data
-				@mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)
+				is_cached.should be false
+				new_mongo_data['data'].should == @new_data
+				new_mongo_data['metadata']['updated_at'].should be_within(1.0).of(@time)
 			end
 		end
 	end
