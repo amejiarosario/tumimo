@@ -1,3 +1,4 @@
+require 'vcr_helper'
 require 'mongo'
 require_relative '../../app/models/data_persistance'
 require 'koala'
@@ -20,10 +21,12 @@ describe MongoFacebook do
 
 	before :each do
 		clean_mongo
-		@access_token = 'AAACEdEose0cBAJuDHyZBBQ6IiF96pQurvzXbHQvhKbc41I6kRUsG9O2j4Qv0B9MBZCFBHJj2ZCIX7GCPnmZADpvQhPzKizU7Kqs5gXUMEgZDZD' # https://developers.facebook.com/tools/explorer
-		@uid = '895685163'
-		@mfb = MongoFacebook.new(@uid, @access_token)
-		@mfb.data = DataPersistance.new database_name
+		# VCR.use_cassette 'facebook/adrian_user' do
+			@access_token = 'AAACEdEose0cBAJuDHyZBBQ6IiF96pQurvzXbHQvhKbc41I6kRUsG9O2j4Qv0B9MBZCFBHJj2ZCIX7GCPnmZADpvQhPzKizU7Kqs5gXUMEgZDZD' # https://developers.facebook.com/tools/explorer
+			@uid = '895685163'
+			@mfb = MongoFacebook.new(@uid, @access_token)
+			@mfb.data = DataPersistance.new database_name
+		# end
 	end
 
 	context 'user personal info' do
@@ -55,7 +58,7 @@ describe MongoFacebook do
 		end
 	end
 
-	context "friends history" do
+	context "friends" do
 		it "should get friend count from API" do
 			VCR.use_cassette 'facebook/get_connections__me_friends_1583' do
 				friend_ids = @mfb.friend_ids
@@ -67,8 +70,36 @@ describe MongoFacebook do
 				cache.should == friend_ids
 			end
 		end
+		context 'friends history' do
+			before :each do
+				# VCR.use_cassette 'facebook/test_user' do
+					@access_token2 = 'AAAFNKZCBGXpABAL5ZAzSk0J6tgZANXNedBnt92CZB3CDNmANIunYg8Tk3cgo6CKZCFXVMgSZCtoy8qroDI9cNvZA5J0uO97agE1b2XMLWnnfUekyro4xbnW' # https://developers.facebook.com/tools/explorer
+					@uid2 = '100004553863831'
+					@mfb2 = MongoFacebook.new(@uid2, @access_token2)
+					@mfb2.data = DataPersistance.new database_name				
+				# end
+				VCR.use_cassette 'facebook/get_connections__me_friends_7' do
+					is_cached, friends = @mfb2.friend_ids(true, 0)
+					is_cached.should be false
+					friends.count.should be 7
+				end					
+			end
 
-		it "detect when new friends :) "
-		it "detects when friends unfriend :( "
+			it "detect when new friends :) " do
+				VCR.use_cassette('facebook/get_connections__me_friends_9') do
+					is_cached, friends = @mfb2.friend_ids(true, 0)
+					is_cached.should be false
+					friends.count.should be 9
+				end				
+			end
+
+			it "detects when friends unfriend :( " do
+				VCR.use_cassette('facebook/get_connections__me_friends_8') do
+					is_cached, friends = @mfb2.friend_ids(true, 0)
+					is_cached.should be false
+					friends.count.should be 8
+				end								
+			end
+		end
 	end
 end

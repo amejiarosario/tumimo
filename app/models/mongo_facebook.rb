@@ -10,14 +10,14 @@ class MongoFacebook
     @uid = uid
   end
   
-  def me(cached_flag=false)
-    data.cached 'get_object__me', uid, cached_flag do
+  def me(cache_indicator=false, ttl=nil)
+    data.cached 'get_object__me', uid, cache_indicator do
       facebook.get_object 'me'
     end
   end
 
-  def friend_ids(cached_flag=false)
-    data.cached 'get_connections__me_friends', uid, cached_flag do
+  def friend_ids(cache_indicator=false, ttl=nil)
+    data.cached 'get_connections__me_friends', uid, cache_indicator do
       facebook.get_connections 'me', 'friends'
     end
   end

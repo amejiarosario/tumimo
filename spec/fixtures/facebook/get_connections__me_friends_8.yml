@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://graph.facebook.com/me/friends?access_token=AAAFNKZCBGXpABAL5ZAzSk0J6tgZANXNedBnt92CZB3CDNmANIunYg8Tk3cgo6CKZCFXVMgSZCtoy8qroDI9cNvZA5J0uO97agE1b2XMLWnnfUekyro4xbnW
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      accept-encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      accept:
+      - ! '*/*'
+      user-agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      access-control-allow-origin:
+      - ! '*'
+      cache-control:
+      - private, no-cache, no-store, must-revalidate
+      content-type:
+      - text/javascript; charset=UTF-8
+      etag:
+      - ! '"9fa969de58577c976cb160e380412502bf3d16c8"'
+      expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      pragma:
+      - no-cache
+      x-fb-rev:
+      - '655325'
+      x-fb-debug:
+      - nPaehl79yPy7m6LGk52tpQQUkmTzZjq4cI0Yw8eif54=
+      date:
+      - Thu, 25 Oct 2012 00:31:02 GMT
+      connection:
+      - close
+      content-length:
+      - '801'
+    body:
+      encoding: US-ASCII
+      string: ! '{"data":[{"name":"Dave Amdeejecdjeg Liangsky","id":"100004550534057"},{"name":"Bill
+        Amdeegfdcfda Shepardwitz","id":"100004557643641"},{"name":"Lisa Amdeehedcggi
+        Sadanberg","id":"100004558543779"},{"name":"Patricia Amdefjbbcggd Sidhuman","id":"100004560223774"},{"name":"John
+        Amdegcbibagh Alisonman","id":"100004573292178"},{"name":"Betty Amdeibigadfh
+        Laverdetman","id":"100004592971468"},{"name":"Carol Amdeiihaaddg Narayanansky","id":"100004599811447"},{"name":"Joe
+        Amdfjdidjhij Putnamsonwitzescubergsteinsenmansky","id":"100004604940890"}],"paging":{"next":"https:\/\/graph.facebook.com\/100004553863831\/friends?access_token=AAAFNKZCBGXpABAL5ZAzSk0J6tgZANXNedBnt92CZB3CDNmANIunYg8Tk3cgo6CKZCFXVMgSZCtoy8qroDI9cNvZA5J0uO97agE1b2XMLWnnfUekyro4xbnW&limit=5000&offset=5000&__after_id=100004604940890"}}'
+    http_version: '1.1'
+  recorded_at: Thu, 25 Oct 2012 00:31:03 GMT
+recorded_with: VCR 2.2.5

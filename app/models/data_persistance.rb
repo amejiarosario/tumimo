@@ -6,42 +6,62 @@ class DataPersistance
   end
 
   # Checks if the data already exists, if not retrive the data.
-  def cached(collection_name, uid, cached_flag=false, &block)
+  #
+  #  * collection_name: name in the database
+  #  * uid: unique identifier
+  #  * cache_indicator: return a flag with the data to indicated if the data was cached or not.
+  #  * ttl: time to live in relative time. e.g. 1.week = 604800, 1.day = 86400
+  #  * block: code block
+  #
+  def cached(collection_name, uid, cache_indicator=false, ttl=nil,  &block)
     cached = true
-    unless data = db.collection(collection_name).find_one(_id: uid)
-      data = block.call
+    data = db.collection(collection_name).find_one(_id: uid)
+    # puts "data::#{data}"
+    # puts "expired::#{expired?(data,ttl)}"
+    if expired?(data,ttl)
+      data = block.call 
       cached = false
-      insert_data(collection_name,uid,data)
+      data = insert_data(collection_name,uid,data)
     end
-    data = cached ? data['data'] : data
-    cached_flag ? [cached, data] : data
+    # data = data['data']
+    cache_indicator ? [cached, data] : data
   end
 
   def insert_data(collection_name, uid, data)
-    db.collection(collection_name).insert(
+    hash = 
       {_id: uid}.merge(
-      metadata.merge(
-      {data: data}))
-    )
+      {metadata: metadata}).merge(
+      {data: data})    
+    id = db.collection(collection_name).insert(hash)
+    hash
   end
 
-  private
-    
-    # Provides information about versioning and data type
-    #
-    # data_type: [:versioned, :diff, :history, :feed]
-    #   * feed: large amount of data that never changes, but always have a new chunk periodically. The old data 
-    #   * versioned: store raw data that change over time but not is suitable to reduce by diff. (user descriptions/bio, displays, photos,...)
-    #   * history: store raw data over time, can be reduce to diff_data. (friend_ids lists)
-    #   * diff: it's the history_data processed with diff increments.
-    def metadata
-      {
-        created_at: Time.now.to_i,
-        updated_at: Time.now.to_i,
-        version: '0.3',
-        source: 'mongo_structure',
-        data_type: 'versioned',
-        next_cursor: ''
-      }
-    end
+  # Is expired if
+  #   * data == nil
+  #   * updated_at + ttl <= Time.now.to_i
+  # if ttl is nil it wont check the updated_at
+  def expired?(data, ttl)
+    return true if data.nil?
+    return true unless data && data[:metadata] && data[:metadata][:updated_at]
+    updated_at = data[:metadata][:updated_at].to_i
+    ttl.nil? ? false : (updated_at + ttl.to_i <= Time.now.to_i)
+  end 
+
+  # Provides information about versioning and data type
+  #
+  # data_type: [:versioned, :diff, :history, :feed]
+  #   * feed: large amount of data that never changes, but always have a new chunk periodically. The old data 
+  #   * versioned: store raw data that change over time but not is suitable to reduce by diff. (user descriptions/bio, displays, photos,...)
+  #   * history: store raw data over time, can be reduce to diff_data. (friend_ids lists)
+  #   * diff: it's the history_data processed with diff increments.
+  def metadata
+    {
+      created_at: Time.now.to_i,
+      updated_at: Time.now.to_i,
+      version: '0.3',
+      source: 'mongo_structure',
+      data_type: 'versioned',
+      next_cursor: ''
+    }
+  end
 end
