@@ -21,12 +21,10 @@ describe MongoFacebook do
 
 	before :each do
 		clean_mongo
-		# VCR.use_cassette 'facebook/adrian_user' do
-			@access_token = 'AAACEdEose0cBAJuDHyZBBQ6IiF96pQurvzXbHQvhKbc41I6kRUsG9O2j4Qv0B9MBZCFBHJj2ZCIX7GCPnmZADpvQhPzKizU7Kqs5gXUMEgZDZD' # https://developers.facebook.com/tools/explorer
-			@uid = '895685163'
-			@mfb = MongoFacebook.new(@uid, @access_token)
-			@mfb.data = DataPersistance.new database_name
-		# end
+		@access_token = 'AAACEdEose0cBAJuDHyZBBQ6IiF96pQurvzXbHQvhKbc41I6kRUsG9O2j4Qv0B9MBZCFBHJj2ZCIX7GCPnmZADpvQhPzKizU7Kqs5gXUMEgZDZD' # https://developers.facebook.com/tools/explorer
+		@uid = '895685163'
+		@mfb = MongoFacebook.new(@uid, @access_token)
+		@mfb.data = DataPersistance.new database_name
 	end
 
 	context 'user personal info' do

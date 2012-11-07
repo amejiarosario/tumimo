@@ -1,5 +1,6 @@
 class DataPersistance
   attr_accessor :db
+  
   def initialize(database_name, port=27017, server='localhost')
     conn = Mongo::Connection.new(server,port)
     @db = conn.db database_name.to_s
@@ -13,28 +14,41 @@ class DataPersistance
   #  * ttl: time to live in relative time. e.g. 1.week = 604800, 1.day = 86400
   #  * block: code block
   #
-  def cached(collection_name, uid, cache_indicator=false, ttl=nil,  &block)
+  def fetch(collection_name, uid, options={}, &block)
+    options[:cache_indicator] ||= false
+    options[:ttl] ||= nil
+    options[:data_type] ||= 'raw'
+
+    data = options[:data_type] == 'raw' ? db.collection(collection_name).find_one(_id: uid) : nil
     cached = true
-    data = db.collection(collection_name).find_one(_id: uid)
-    # puts "data::#{data.inspect}"
-    # puts "ttl::#{ttl.inspect}"
-    # puts "expired::#{expired?(data,ttl).inspect}"
-    if expired?(data,ttl)
+    if expired?(data,options[:ttl])
       data = block.call 
       cached = false
-      data = insert_data(collection_name,uid,data)
+      data = insert_data(collection_name, uid, data, options)
     end
-    # data = data['data']
-    cache_indicator ? [cached, data] : data
+    options[:cache_indicator] ? [cached, data] : data
   end
 
-  def insert_data(collection_name, uid, data)
+  def insert_data(collection_name, uid, data, options={})
     hash = 
       {'_id' => uid}.merge(
-      {'metadata' => metadata}).merge(
-      {'data' => data})    
+      {'metadata' => metadata(options)}).merge(
+      {'data' => process_data(uid,data,options)})    
     id = db.collection(collection_name).insert(hash)
     hash
+  end
+
+  def process_data(uid,data,options={})
+    case options[:data_type]
+    when 'raw'
+      data
+    when 'diff'
+      additions = [6]
+      removals = []
+      {'raw' => data, '++' => additions, '--' => removals}
+    else
+      data
+    end
   end
 
   # Indicates if data has expired
@@ -47,30 +61,29 @@ class DataPersistance
   # if ttl is nil it wont check the updated_at
   #
   def expired?(data, ttl)
-    # puts "* expired?::data.nil?"
     return true if data.nil?
-    # puts "** expired?::data[:metadata][:updated_at] => #{if data && data['metadata'] && data['metadata']['updated_at']; data['metadata']['updated_at'].inspect; else 'not metadata'; end }"
     return true unless data && data['metadata'] && data['metadata']['updated_at']
     updated_at = data['metadata']['updated_at'].to_i
-    # puts "*** expired?::ttl.nil? | ttl=#{ttl}; updated_at = #{updated_at}"
     ttl.nil? ? false : (updated_at + ttl.to_i <= Time.now.to_i)
   end  
 
   # Provides information about versioning and data type
   #
-  # data_type: [:versioned, :diff, :history, :feed]
+  # data_type: [:raw, :versioned, :diff, :history, :feed]
   #   * feed: large amount of data that never changes, but always have a new chunk periodically. The old data 
   #   * versioned: store raw data that change over time but not is suitable to reduce by diff. (user descriptions/bio, displays, photos,...)
   #   * history: store raw data over time, can be reduce to diff_data. (friend_ids lists)
   #   * diff: it's the history_data processed with diff increments.
+  #   * raw: regular data
   #
-  def metadata
+  def metadata(options={})
+    options[:data_type] ||= 'raw'
     {
       'created_at' => Time.now.to_i,
       'updated_at' => Time.now.to_i,
-      'version' => '0.3',
+      'version' => '0.4',
       'source' => 'mongo_structure',
-      'data_type' => 'versioned',
+      'data_type' => options[:data_type],
       'next_cursor' => ''
     }
   end
