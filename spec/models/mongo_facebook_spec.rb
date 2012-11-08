@@ -63,10 +63,12 @@ describe MongoFacebook do
 	context "friends" do
 		it "should get friend count from API" do
 			VCR.use_cassette 'facebook/get_connections__me_friends_1605', :record => :new_episodes do
-				friend_ids = @mfb.friend_ids['data']['raw']
+				is_cached, friend_ids = @mfb.friend_ids(true)
+				friend_ids = friend_ids['data']['raw']
 				friend_ids.count.should be 1605
 				friend_ids.select{|t| t['name'] =~ /Esther\ Brown/}.count.should be 1
 				# test cache
+				is_cached.should be false
 				is_cached, cache = @mfb.friend_ids(true)
 				is_cached.should be true
 				cache['data']['raw'].should == friend_ids

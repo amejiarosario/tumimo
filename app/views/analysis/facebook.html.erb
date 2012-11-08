@@ -1,6 +1,6 @@
-<% fb = current_user.mfb %>
+<% fb = @user %>
 
-<% u = fb.subject %>
+<% u = fb.me['data']['raw'] %>
 <section id="personal_information">
 	<div class="page-header"><h1>About Yourself</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
@@ -31,7 +31,7 @@
 	</table>
 </section>
 
-<% p = fb.user_feeds %>
+<%# p = fb.user_feeds %>
 <section id="posts_information">
 <!-- http://developers.facebook.com/docs/reference/api/post/ -->
 <!-- https://graph.facebook.com/me/feed -->
@@ -60,7 +60,7 @@ LIMIT 5000
 		<tbody>
 			<tr>
 				<td>Total Wall Posts</td>
-				<td><%= "#{p.count}" || '-'  %></td>
+				<td><%#= "#{p.count}" || '-'  %></td>
 			</tr>
 			<tr>
 				<!-- f.map{|t| t.try(:[], 'likes').try(:[],'count')}.compact -->
@@ -76,7 +76,7 @@ LIMIT 5000
 	</table>
 </section>
 
-<% f = fb.friend_ids %>
+<% f = fb.friend_ids['data']['raw'] %>
 <section id="friends_information">
 	<div class="page-header"><h1>Friends</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
