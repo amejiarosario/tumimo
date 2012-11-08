@@ -10,13 +10,13 @@ class MongoFacebook
   end
   
   def me(cache_indicator=false, ttl=nil)
-    data.fetch 'get_object__me', uid, cache_indicator do
+    data.fetch 'get_object__me', uid, cache_indicator: cache_indicator do
       facebook.get_object 'me'
     end
   end
 
   def friend_ids(cache_indicator=false, ttl=nil)
-    data.fetch 'get_connections__me_friends', uid, cache_indicator do
+    data.fetch 'get_connections__me_friends', uid, cache_indicator: cache_indicator do
       facebook.get_connections 'me', 'friends'
     end
   end
