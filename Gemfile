@@ -45,14 +45,25 @@ gem 'omniauth-facebook'
 gem 'omniauth-github'
 gem 'omniauth-foursquare'
 gem 'omniauth-linkedin'
-gem 'rails-footnotes', :group => :development
 gem 'mongo'
 gem 'bson_ext'
 gem 'twitter'
 gem 'koala'
-gem 'pry-rails', :group => :development
 gem "rspec-rails", :group => [:development, :test]
 gem "ZenTest"
 gem "autotest-rails"
-gem 'vcr', group: :test
-gem 'fakeweb', group: :test
+
+group :test do
+	gem 'vcr'
+	gem 'fakeweb'
+end
+
+group :development do
+  gem 'pry-rails'
+  gem 'rails-footnotes'
+  
+  gem 'guard-rspec'
+  gem 'rb-inotify', :require => false
+  gem 'rb-fsevent', :require => false
+  gem 'rb-fchange', :require => false  
+end

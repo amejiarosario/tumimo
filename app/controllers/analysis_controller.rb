@@ -5,6 +5,6 @@ class AnalysisController < ApplicationController
   end
 
   def facebook
-  	@user = current_user.facebook
+  	@user = current_user.mfb
   end
 end

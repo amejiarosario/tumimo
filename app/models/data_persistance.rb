@@ -18,8 +18,10 @@ class DataPersistance
     options[:cache_indicator] ||= false
     options[:ttl] ||= nil
     options[:data_type] ||= 'raw'
+    options[:collection_name] = collection_name
+    options[:uid] = uid
 
-    data = options[:data_type] == 'raw' ? db.collection(collection_name).find_one(_id: uid) : nil
+    data = options[:data_type] == 'raw' ? db.collection(collection_name).find_one(uid: uid) : nil
     cached = true
     if expired?(data,options[:ttl])
       data = block.call 
@@ -31,7 +33,7 @@ class DataPersistance
 
   def insert_data(collection_name, uid, data, options={})
     hash = 
-      {'_id' => uid}.merge(
+      {'uid' => uid}.merge(
       {'metadata' => metadata(options)}).merge(
       {'data' => process_data(uid,data,options)})    
     id = db.collection(collection_name).insert(hash)
@@ -41,13 +43,19 @@ class DataPersistance
   def process_data(uid,data,options={})
     case options[:data_type]
     when 'raw'
-      data
+      {'raw' => data }
     when 'diff'
-      additions = [6]
-      removals = []
+      last = db.collection(options[:collection_name]).find(uid: options[:uid].to_i).sort('_id' => :desc).limit(1).to_a[0]
+      additions = removals = []
+      unless last.nil?
+        ldata = last['data']['raw']
+        #puts "**** #{ldata}"
+        additions = data - ldata
+        removals = ldata - data
+      end
       {'raw' => data, '++' => additions, '--' => removals}
     else
-      data
+      {'raw' => data }
     end
   end
 
@@ -81,7 +89,7 @@ class DataPersistance
     {
       'created_at' => Time.now.to_i,
       'updated_at' => Time.now.to_i,
-      'version' => '0.4',
+      'version' => '0.5',
       'source' => 'mongo_structure',
       'data_type' => options[:data_type],
       'next_cursor' => ''

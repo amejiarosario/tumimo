@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
 	def mfb
 		unless @mfb
 			fb_oauth = authentications.where(provider: 'facebook').first
-			@mfb = MongoFacebook.new(fb_oauth.uid, fb_oauth.oauth_token, fb_oauth.oauth_secret)
+			@mfb = MongoFacebook.new(fb_oauth.uid, fb_oauth.oauth_token) #, fb_oauth.oauth_secret
 		end
 		@mfb
 	end
