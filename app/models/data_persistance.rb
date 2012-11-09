@@ -24,9 +24,32 @@ class DataPersistance
     data = options[:data_type] == 'raw' ? db.collection(collection_name).find_one(uid: uid) : nil
     cached = true
     if expired?(data,options[:ttl])
-      data = block.call 
+      data = block.call
       cached = false
-      data = insert_data(collection_name, uid, data, options)
+      case options[:data_type]
+      when 'feed'
+        feed = data
+        # check where was let of
+        unless cached = db.collection(collection_name).find_one(uid: uid)
+          # new data
+          data = insert_data(collection_name,uid,feed,options)
+
+          # get all feeds recursively 
+          while feed = feed.next_page
+            feed.each do |one_entry|
+              db.collection(collection_name).update({uid: uid}, {"$push" => {"data.raw" => one_entry }})
+            end
+            options[:next_page] = (feed && feed.paging && feed.paging.has_key?('next')) ? feed.paging['next'] : nil
+            print '.'
+          end          
+        else
+          # there is data
+          data = cached
+        end
+        data = db.collection(collection_name).find_one(uid: uid)
+      else
+        data = insert_data(collection_name, uid, data, options)
+      end
     end
     options[:cache_indicator] ? [cached, data] : data
   end
@@ -44,6 +67,8 @@ class DataPersistance
     case options[:data_type]
     when 'raw'
       {'raw' => data }
+    when 'feed'
+      {'raw' => data, 'next_page' => options[:next_page]}
     when 'diff'
       last = db.collection(options[:collection_name]).find(uid: options[:uid].to_i).sort('_id' => :desc).limit(1).to_a[0]
       additions = removals = []

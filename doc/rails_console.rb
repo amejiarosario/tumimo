@@ -1,0 +1,3 @@
+uid = "895685163"
+token = "AAAFNKZCBGXpABAHQoMDIdLOABlzr4f8KHzUNXDTga0m9MfXEsVnM1gATNNsbcQpX7iFzrSIVC64ChO9ZAMDheowcGxyzRAPHrRNtU65AZDZD"
+mfb = MongoFacebook.new(uid,token)

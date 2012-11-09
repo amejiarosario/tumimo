@@ -191,7 +191,13 @@ describe DataPersistance do
     end   
   end
 
+  context 'feeds data (posts, tweets)' do
+    it 'pulls all the data recursively' do
+      
+    end 
+  end
+
+
   context 'versioned data'
-  context 'feeds data (posts, tweets)'
   context 'diff data (friends list diff over time)'
 end
