@@ -34,7 +34,7 @@ class DataPersistance
           # new data
           data = insert_data(collection_name,uid,feed,options)
 
-          # get all feeds recursively 
+          # get all feeds recursively (might take a couple of minutes)
           while feed = feed.next_page
             feed.each do |one_entry|
               db.collection(collection_name).update({uid: uid}, {"$push" => {"data.raw" => one_entry }})

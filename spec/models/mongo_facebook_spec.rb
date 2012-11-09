@@ -69,7 +69,7 @@ describe MongoFacebook do
 				puts "*** next_page = #{data['data']['next_page']}"
 				data['metadata']['data_type'].should == 'feed'
 				data['data']['next_page'].should be_empty
-				data['data']['raw'].count.should be > 23
+				data['data']['raw'].count.should be 6513
 			end
 		end
 	end
