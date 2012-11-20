@@ -5,6 +5,7 @@ class AnalysisController < ApplicationController
   end
 
   def facebook
-  	@user = current_user.mfb
+  	@me = current_user.mfb.me['data']['raw']
+  	@friend_ids = current_user.mfb.friend_ids['data']['raw']
   end
 end

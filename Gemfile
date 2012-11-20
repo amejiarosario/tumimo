@@ -52,6 +52,7 @@ gem 'koala'
 gem "rspec-rails", :group => [:development, :test]
 gem "ZenTest"
 gem "autotest-rails"
+gem "stalker"
 
 group :test do
 	gem 'vcr'

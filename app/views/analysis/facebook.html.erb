@@ -1,25 +1,22 @@
-<% fb = @user %>
-
-<% u = fb.me['data']['raw'] %>
 <section id="personal_information">
 	<div class="page-header"><h1>About Yourself</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
 		<tbody>
 			<tr>
 				<td>Name</td>
-				<td><%= u['name'] || '-' %></td>
+				<td><%= @me['name'] || '-' %></td>
 			</tr>
 			<tr>
 				<td>Birthday</td>
-				<td><%= u['birthday'] || '-'  %></td>
+				<td><%= @me['birthday'] || '-'  %></td>
 			</tr>			
 			<tr>
 				<td>Hometown</td>
-				<td><%= u['hometown']['name'] || '-'  %></td>
+				<td><%= @me['hometown']['name'] || '-'  %></td>
 			</tr>
 			<tr>
 				<td>Work</td>
-				<td><%= "#{u['work'][0]['position']['name']} at #{u['work'][0]['employer']['name']}" || '-'  %></td>
+				<td><%= "#{@me['work'][0]['position']['name']} at #{@me['work'][0]['employer']['name']}" || '-'  %></td>
 			</tr>
 			<tr>
 				<td>Opened Facebook on</td>
@@ -76,14 +73,13 @@ LIMIT 5000
 	</table>
 </section>
 
-<% f = fb.friend_ids['data']['raw'] %>
 <section id="friends_information">
 	<div class="page-header"><h1>Friends</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
 		<tbody>
 			<tr>
 				<td>Friends Count</td>
-				<td><%= "#{f.count}" || '-' %></td>
+				<td><%= "#{@friend_ids.count}" || '-' %></td>
 			</tr>
 			<tr>
 				<td>Groups</td>
