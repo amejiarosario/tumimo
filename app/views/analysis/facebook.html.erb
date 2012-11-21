@@ -1,22 +1,23 @@
+<% processing = 'processing...' %>
 <section id="personal_information">
 	<div class="page-header"><h1>About Yourself</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
 		<tbody>
 			<tr>
 				<td>Name</td>
-				<td><%= @me['name'] || '-' %></td>
+				<td><%= @me.try(:[],'name') || processing %></td>
 			</tr>
 			<tr>
 				<td>Birthday</td>
-				<td><%= @me['birthday'] || '-'  %></td>
+				<td><%= @me.try(:[],'birthday') || processing  %></td>
 			</tr>			
 			<tr>
 				<td>Hometown</td>
-				<td><%= @me['hometown']['name'] || '-'  %></td>
+				<td><%= @me.try(:[],'hometown').try(:[],'name') || processing  %></td>
 			</tr>
 			<tr>
 				<td>Work</td>
-				<td><%= "#{@me['work'][0]['position']['name']} at #{@me['work'][0]['employer']['name']}" || '-'  %></td>
+				<td><%#= "#{@me['work'][0]['position']['name']} at #{@me['work'][0]['employer']['name']}" || '-'  %></td>
 			</tr>
 			<tr>
 				<td>Opened Facebook on</td>
@@ -57,17 +58,17 @@ LIMIT 5000
 		<tbody>
 			<tr>
 				<td>Total Wall Posts</td>
-				<td><%#= "#{p.count}" || '-'  %></td>
+				<td><%#= "#{p.count}" || processing  %></td>
 			</tr>
 			<tr>
 				<!-- f.map{|t| t.try(:[], 'likes').try(:[],'count')}.compact -->
 				<td>10 Top Most Liked Posts</td>
-				<td><%= "#{}" || '-'  %></td>
+				<td><%= "#{}" || processing  %></td>
 			</tr>
 			<tr>
 				<!-- f.map{|t| [t.try(:[], 'comments').try(:[],'count'), t['id']]}.compact.sort -->
 				<td>10 Top Most Commented Posts</td>
-				<td><%= "#{}" || '-'  %></td>
+				<td><%= "#{}" || processing  %></td>
 			</tr>			
 		</tbody>
 	</table>
@@ -79,11 +80,11 @@ LIMIT 5000
 		<tbody>
 			<tr>
 				<td>Friends Count</td>
-				<td><%= "#{@friend_ids.count}" || '-' %></td>
+				<td><%= @friend_ids.try(:count) || processing %></td>
 			</tr>
 			<tr>
 				<td>Groups</td>
-				<td><%= "#{}" || '-'  %></td>
+				<td><%= "" || processing  %></td>
 			</tr>				
 		</tbody>
 	</table>

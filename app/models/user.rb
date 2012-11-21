@@ -1,3 +1,5 @@
+require 'stalker'
+
 class User < ActiveRecord::Base
 	has_many :authentications, dependent: :destroy
 	
@@ -11,19 +13,54 @@ class User < ActiveRecord::Base
 			data: oauth.to_json.to_s
 		)
 	end
+
+	# Process jobs in the background
+	# Return nil if the task is enqueue
+	# Return result if the data if data is ready
+	def send_job(job = nil, provider = 'facebook', options = {})
+		case provider
+		when 'facebook'
+			options.merge!({oauth1: facebook_oauth.uid, oauth2: facebook_oauth.oauth_token})
+			provider_instance = mfb
+		when 'twitter'
+			options.merge!({oauth1: twitter_oauth.oauth_token, oauth2: twitter_oauth.oauth_secret})
+			provider_instance = mtw
+		else
+			raise "Provider #{provider} not implemented."
+			nil
+		end
+		
+		Stalker.enqueue("#{provider.to_s}.#{job.to_s}", options)
+		
+		# check if task is ready (is in cache)
+		options.merge!({find_and_return: true})
+		data = provider_instance.send(job, options)
+		notify if data.nil?
+		data
+	end
+
+	def notify
+		# TODO notify user when his data is ready.... (email, fb-like notification)
+	end
+
+	def facebook_oauth
+		@facebook_oauth ||= authentications.where(provider: 'facebook').last
+	end
 	
+	def twitter_oauth
+		@twitter_oauth ||= authentications.where(provider: 'twitter').last
+	end
+
 	def mfb
 		unless @mfb
-			fb_oauth = authentications.where(provider: 'facebook').first
-			@mfb = MongoFacebook.new(fb_oauth.uid, fb_oauth.oauth_token) #, fb_oauth.oauth_secret
+			@mfb = MongoFacebook.new(facebook_oauth.uid, facebook_oauth.oauth_token) #, facebook_oauth.oauth_secret
 		end
 		@mfb
 	end
 
 	def mtw
 		unless @mtw
-			tw_oauth = authentications.where(provider: 'twitter').first
-			@mtw = MongoTwitter.new(tw_oauth.oauth_token, tw_oauth.oauth_secret)
+			@mtw = MongoTwitter.new(twitter_oauth.oauth_token, twitter_oauth.oauth_secret)
 		end
 		@mtw
 	end

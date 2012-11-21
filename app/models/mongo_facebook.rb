@@ -9,22 +9,22 @@ class MongoFacebook
     @uid = uid
   end
   
-  def me(cache_indicator=false, ttl=nil)
-    data.fetch 'get_object__me', uid, cache_indicator: cache_indicator, ttl: ttl do
-      facebook.get_object 'me'
+  def me(options = {})
+    data.fetch 'get_object__me', uid, options do
+      facebook.get_object uid
     end
   end
 
-  def friend_ids(cache_indicator=false, ttl=nil)
+  def friend_ids(options = {})
     # FIXME data_type: 'diff' and add test cases
-    data.fetch 'get_connections__me_friends', uid, data_type: 'raw', cache_indicator: cache_indicator, ttl: ttl do
-      facebook.get_connections 'me', 'friends'
+    data.fetch 'get_connections__me_friends', uid, options do
+      facebook.get_connections uid, 'friends'
     end
   end
 
-  def feed(limit=nil, cache_indicator=false)
-    data.fetch 'get_connections__me_feed', uid, data_type: 'feed', limit: limit, cache_indicator: cache_indicator do
-      facebook.get_connections 'me', 'feed'
+  def feed(options = {})
+    data.fetch 'get_connections__me_feed', uid, options.merge(data_type: 'feed') do
+      facebook.get_connections uid, 'feed'
     end
   end
 end

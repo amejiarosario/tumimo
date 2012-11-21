@@ -45,9 +45,9 @@ describe MongoFacebook do
 
 		it 'should cache user data after first call' do
 			VCR.use_cassette 'facebook/get_object__me', :record => :new_episodes do
-				is_cached, data = @mfb.me(true)
+				is_cached, data = @mfb.me(cache_indicator: true)
 				is_cached.should be false				
-				is_cached, user = @mfb.me(true)
+				is_cached, user = @mfb.me(cache_indicator: true)
 				is_cached.should be true
 				user['metadata']['data_type'].should == 'raw'
 				user = user['data']['raw']
@@ -61,30 +61,30 @@ describe MongoFacebook do
 		end
 	end
 
-	context 'feeds and wall posts' do
-		it 'gets post recursively' do
-			VCR.use_cassette 'facebook/get_connections__me_feed', :record => :new_episodes do
-				data = @mfb.feed
-				#puts "**** raw = #{data.inspect}"
-				puts "*** next_page = #{data['data']['next_page']}"
-				data['metadata']['data_type'].should == 'feed'
-				data['data']['next_page'].should be_empty
-				data['data']['raw'].count.should be 6513
-			end
-		end
-	end
+	# context 'feeds and wall posts' do
+	# 	it 'gets post recursively' do
+	# 		VCR.use_cassette 'facebook/get_connections__me_feed', :record => :new_episodes do
+	# 			data = @mfb.feed
+	# 			#puts "**** raw = #{data.inspect}"
+	# 			puts "*** next_page = #{data['data']['next_page']}"
+	# 			data['metadata']['data_type'].should == 'feed'
+	# 			data['data']['next_page'].should be_empty
+	# 			data['data']['raw'].count.should be 6513
+	# 		end
+	# 	end
+	# end
 
 	context "friends" do
 		it "should get friend count from API" do
 			VCR.use_cassette 'facebook/get_connections__me_friends_1605', :record => :new_episodes do
-				is_cached, friend_ids = @mfb.friend_ids(true)
+				is_cached, friend_ids = @mfb.friend_ids(cache_indicator: true)
 				friend_ids['metadata']['data_type'].should == 'raw' # FIXME diff
 				friend_ids = friend_ids['data']['raw']
 				friend_ids.count.should be 1605
 				friend_ids.select{|t| t['name'] =~ /Esther\ Brown/}.count.should be 1
 				# test cache
 				is_cached.should be false
-				is_cached, cache = @mfb.friend_ids(true)
+				is_cached, cache = @mfb.friend_ids(cache_indicator: true)
 				is_cached.should be true
 				cache['data']['raw'].should == friend_ids
 			end

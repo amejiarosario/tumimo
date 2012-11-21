@@ -20,8 +20,12 @@ class DataPersistance
     options[:data_type] ||= 'raw'
     options[:collection_name] = collection_name
     options[:uid] = uid
+    options[:find_and_return] ||= false 
 
-    data = options[:data_type] == 'raw' ? db.collection(collection_name).find_one(uid: uid) : nil
+    data = find(collection_name,uid) 
+    return data if options[:find_and_return] || block.nil?
+
+    data = options[:data_type] == 'raw' ? data : nil
     cached = true
     if expired?(data,options[:ttl])
       data = block.call
@@ -52,6 +56,10 @@ class DataPersistance
       end
     end
     options[:cache_indicator] ? [cached, data] : data
+  end
+
+  def find(collection_name, uid)
+    db.collection(collection_name).find_one(uid: uid)
   end
 
   def insert_data(collection_name, uid, data, options={})
@@ -102,6 +110,8 @@ class DataPersistance
 
   # Provides information about versioning and data type
   #
+  # status: [:ready, :incomplete, :expired]
+  #
   # data_type: [:raw, :versioned, :diff, :history, :feed]
   #   * feed: large amount of data that never changes, but always have a new chunk periodically. The old data 
   #   * versioned: store raw data that change over time but not is suitable to reduce by diff. (user descriptions/bio, displays, photos,...)
@@ -117,6 +127,7 @@ class DataPersistance
       'version' => '0.5',
       'source' => 'mongo_structure',
       'data_type' => options[:data_type],
+      'status' => 'ready', # TODO use it
       'next_cursor' => ''
     }
   end
