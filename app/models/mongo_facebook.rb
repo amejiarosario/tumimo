@@ -4,6 +4,7 @@ class MongoFacebook
   attr_reader :uid
 
   def initialize(uid,access_token)
+    raise "MongoFacebook constructor requires `uid' and `access_token'" if uid.nil? || access_token.nil?
     @facebook = Koala::Facebook::API.new(access_token)
     @data = DataPersistance.new 'facebook'
     @uid = uid

@@ -1,5 +1,7 @@
 class DataPersistance
   attr_accessor :db
+  READY = 'ready'
+  PROCESSING = 'processing'
   
   def initialize(database_name, port=27017, server='localhost')
     conn = Mongo::Connection.new(server,port)
@@ -39,22 +41,24 @@ class DataPersistance
           data = insert_data(collection_name,uid,feed,options)
 
           # get all feeds recursively (might take a couple of minutes)
-          while feed = feed.next_page
+          while feed.respond_to?(:next_page) && feed = feed.next_page
             feed.each do |one_entry|
               db.collection(collection_name).update({uid: uid}, {"$push" => {"data.raw" => one_entry }})
             end
             options[:next_page] = (feed && feed.paging && feed.paging.has_key?('next')) ? feed.paging['next'] : nil
             print '.'
-          end          
+          end 
+          db.collection(collection_name).update({uid: uid}, {"$set" => {"metadata.status" => "ready" }}) 
+          data = db.collection(collection_name).find_one(uid: uid)           
         else
           # there is data
           data = cached
         end
-        data = db.collection(collection_name).find_one(uid: uid)
       else
         data = insert_data(collection_name, uid, data, options)
-      end
-    end
+      end # case options[:data_type]    
+    end # expired?
+
     options[:cache_indicator] ? [cached, data] : data
   end
 
@@ -65,17 +69,19 @@ class DataPersistance
   def insert_data(collection_name, uid, data, options={})
     hash = 
       {'uid' => uid}.merge(
-      {'metadata' => metadata(options)}).merge(
-      {'data' => process_data(uid,data,options)})    
+      {'data' => process_data(uid,data,options)}).merge(
+      {'metadata' => metadata(options)})    
     id = db.collection(collection_name).insert(hash)
     hash
   end
 
-  def process_data(uid,data,options={})
+  def process_data(uid, data, options={})
+    options[:status] = READY
     case options[:data_type]
     when 'raw'
       {'raw' => data }
     when 'feed'
+      options[:status] = PROCESSING
       {'raw' => data, 'next_page' => options[:next_page]}
     when 'diff'
       last = db.collection(options[:collection_name]).find(uid: options[:uid].to_i).sort('_id' => :desc).limit(1).to_a[0]
@@ -110,7 +116,7 @@ class DataPersistance
 
   # Provides information about versioning and data type
   #
-  # status: [:ready, :incomplete, :expired]
+  # status: [:ready, :processing, :expired]
   #
   # data_type: [:raw, :versioned, :diff, :history, :feed]
   #   * feed: large amount of data that never changes, but always have a new chunk periodically. The old data 
@@ -124,10 +130,10 @@ class DataPersistance
     {
       'created_at' => Time.now.to_i,
       'updated_at' => Time.now.to_i,
-      'version' => '0.5',
+      'version' => '0.6',
       'source' => 'mongo_structure',
       'data_type' => options[:data_type],
-      'status' => 'ready', # TODO use it
+      'status' => options[:status] || 'processing',
       'next_cursor' => ''
     }
   end

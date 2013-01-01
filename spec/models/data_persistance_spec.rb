@@ -19,7 +19,24 @@ describe DataPersistance do
     @db.collection_names.each do |collection_name|
       @db[collection_name].remove
     end   
-  end 
+  end
+
+  context 'data feed fetch statuses' do
+    {'with feed data_type' => 'feed', 'with raw data_type' => 'raw'}.each do |k,v|
+      it "has an 'ready' status #{k}" do
+        data = 'some data'
+        res = @persistance.fetch('diff_test_collection', 123, data_type: v){ data }
+        puts "****#{res.inspect}"
+        res['data']['raw'].should be == data
+        res['metadata']['status'].should == 'ready'
+      end
+    end
+    it "should store feeds entries individually" do
+      pending(" set feeds and test")
+    end
+    it "should continue fetching feed data when interrupted"
+  end
+
 
   context 'expired data checking' do
     @week = 604800

@@ -4,6 +4,6 @@ postgres: postgres -D /usr/local/psql2/data
 # postgres: pg_ctl start -D /usr/local/psql2/data -l log/database.log
 mongo: /opt/local/bin/mongod
 # faye
-web: rails s
-worker: stalk script/beanstalk_worker.rb > log/beanstalk_worker.log 2>&1
+#web: rails s
+worker: stalk script/beanstalk_worker.rb 
 

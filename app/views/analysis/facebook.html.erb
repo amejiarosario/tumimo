@@ -58,17 +58,17 @@ LIMIT 5000
 		<tbody>
 			<tr>
 				<td>Total Wall Posts</td>
-				<td><%#= "#{p.count}" || processing  %></td>
+				<td><%= @feed.try(:count) || processing  %></td>
 			</tr>
 			<tr>
 				<!-- f.map{|t| t.try(:[], 'likes').try(:[],'count')}.compact -->
 				<td>10 Top Most Liked Posts</td>
-				<td><%= "#{}" || processing  %></td>
+				<td><%= "" || processing  %></td>
 			</tr>
 			<tr>
 				<!-- f.map{|t| [t.try(:[], 'comments').try(:[],'count'), t['id']]}.compact.sort -->
 				<td>10 Top Most Commented Posts</td>
-				<td><%= "#{}" || processing  %></td>
+				<td><%= "" || processing  %></td>
 			</tr>			
 		</tbody>
 	</table>

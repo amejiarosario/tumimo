@@ -23,7 +23,12 @@ end
 job 'facebook.me' do |args|
 	args = hashWithIndifferentAccess(args)
 	mfb = MongoFacebook.new(args[:oauth1], args[:oauth2])
-	mfb.me(args)
+	data = mfb.me(args)
+	puts "mfb.me=#{data.inspect}"
+
+	error do |e,job,args|
+		puts "ERROR #{e.inspect}, #{job.inspect}, #{args.inspect}"
+	end
 end
 
 job 'facebook.friend_ids' do |args|

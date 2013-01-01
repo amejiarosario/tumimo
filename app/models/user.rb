@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 		)
 	end
 
-	# Process jobs in the background
+	# Process jobs in the background if the data is not already in the database.
 	# Return nil if the task is enqueue
 	# Return result if the data if data is ready
 	def send_job(job = nil, provider = 'facebook', options = {})
@@ -30,12 +30,15 @@ class User < ActiveRecord::Base
 			nil
 		end
 		
-		Stalker.enqueue("#{provider.to_s}.#{job.to_s}", options)
-		
 		# check if task is ready (is in cache)
 		options.merge!({find_and_return: true})
 		data = provider_instance.send(job, options)
-		notify if data.nil?
+
+		if data.nil? #|| (data['metadata']['status'] != 'ready' rescue nil)
+			Stalker.enqueue("#{provider.to_s}.#{job.to_s}", options)
+			notify
+		end
+
 		data
 	end
 
