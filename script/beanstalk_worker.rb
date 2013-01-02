@@ -20,26 +20,29 @@ job 'ping' do |args|
 	File.open("tmp/pong.txt", "a") { |file| file.puts "ping: #{Time.now} - #{args.inspect}" }
 end
 
+# Stalker.enqueue('facebook.me', oauth1: '895685163', oauth2: 'AAAFNKZCBGXpABAHQoMDIdLOABlzr4f8KHzUNXDTga0m9MfXEsVnM1gATNNsbcQpX7iFzrSIVC64ChO9ZAMDheowcGxyzRAPHrRNtU65AZDZD')
 job 'facebook.me' do |args|
 	args = hashWithIndifferentAccess(args)
 	mfb = MongoFacebook.new(args[:oauth1], args[:oauth2])
 	data = mfb.me(args)
-	puts "mfb.me=#{data.inspect}"
-
-	error do |e,job,args|
-		puts "ERROR #{e.inspect}, #{job.inspect}, #{args.inspect}"
-	end
+	log "mfb.me=#{data.inspect}"
 end
 
 job 'facebook.friend_ids' do |args|
 	args = hashWithIndifferentAccess(args)
 	puts "args=#{args.inspect}"
 	mfb = MongoFacebook.new(args[:oauth1], args[:oauth2])
-	mfb.friend_ids(args)
+	data = mfb.friend_ids(args)
+	log "mfb.friend_ids=#{data.inspect}"
 end
 
 job 'facebook.feed' do |args|
 	args = hashWithIndifferentAccess(args)
 	mfb = MongoFacebook.new(args[:oauth1], args[:oauth2])
-	mfb.feed(args)	
+	data = mfb.feed(args)	
+	log "mfb.feed=#{data.inspect}"
+end
+
+error do |e,job,args|
+	log "ERROR #{e.inspect}, #{job.inspect}, #{args.inspect}"
 end

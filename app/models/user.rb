@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
 		data = provider_instance.send(job, options)
 
 		if data.nil? #|| (data['metadata']['status'] != 'ready' rescue nil)
-			Stalker.enqueue("#{provider.to_s}.#{job.to_s}", options)
+			Stalker.enqueue("#{provider.to_s}.#{job.to_s}", options, {ttr: 3600})
 			notify
 		end
 

@@ -5,5 +5,7 @@ postgres: postgres -D /usr/local/psql2/data
 mongo: /opt/local/bin/mongod
 # faye
 web: rails s
-worker: stalk script/beanstalk_worker.rb > log/beanstalk_worker.log 2>&1
+worker: stalk script/beanstalk_worker.rb 
+#worker: stalk script/beanstalk_worker.rb > log/beanstalk_worker.log 2>&1
+
 
