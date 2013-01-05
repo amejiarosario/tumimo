@@ -1,4 +1,4 @@
-<% processing = 'processing...' %>
+<% processing = '-' %>
 <section id="personal_information">
 	<div class="page-header"><h1>About Yourself</h1></div>
 	<table class="table table-hover table-condensed table-striped table-bordered">
@@ -17,11 +17,15 @@
 			</tr>
 			<tr>
 				<td>Work</td>
-				<td><%#= "#{@me['work'][0]['position']['name']} at #{@me['work'][0]['employer']['name']}" || '-'  %></td>
+				<% position =  @me.try(:[],'work').try(:[],0).try(:[],'position').try(:[],'name') %>
+				<% workplace =  @me.try(:[],'work').try(:[],0).try(:[],'employer').try(:[],'name') %>
+				<% work = [position,workplace].compact.join(" at ") %>
+				<td><%= work.blank? ? '-' : work  %></td>
 			</tr>
 			<tr>
 				<td>Opened Facebook on</td>
-				<td><%= "#{}" || '-'  %></td>
+				<% date = Time.parse(@feed.last["created_time"]).strftime("%b/%d/%Y") rescue nil %>
+				<td><%= date || '-'  %></td>
 				<!-- http://stackoverflow.com/questions/7332957/determine-when-user-created-facebook-account -->
 				<!-- November 3, 2007 -->
 			</tr>			

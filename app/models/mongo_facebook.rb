@@ -24,8 +24,18 @@ class MongoFacebook
   end
 
   def feed(options = {})
+    # TODO get metadata while fetching like last data post
+    # FIXME detect if the feed fetching was interrrupted or imcomplete
     data.fetch 'get_connections__me_feed', uid, options.merge(data_type: 'feed') do
       facebook.get_connections uid, 'feed'
     end
   end
+
+  # def process_feed(options = {})
+  #   col = data.db.collection("get_connections__me_feed")
+  #   if col.count > 0
+  #     feeds = col.find(uid: uid).to_a.first
+  #     joined_facebook = feeds["data"]["raw"].last["created_time"]
+  #   end
+  # end
 end
