@@ -1,8 +1,14 @@
 require 'stalker'
 
 class User < ActiveRecord::Base
+	include Backburner::Performable
+
 	has_many :authentications, dependent: :destroy
 	
+	def ping
+		File.open("tmp/pong.txt", "a") { |file| file.puts "ping: #{Time.now} - User:ping" }
+	end
+
 	def create_authentication(oauth)
 		authentications.create!(
 			provider: oauth['provider'], 
@@ -18,6 +24,7 @@ class User < ActiveRecord::Base
 	# Return nil if the task is enqueue
 	# Return result if the data if data is ready
 	def send_job(job = nil, provider = 'facebook', options = {})
+		raise "No job provided." if job.nil?
 		case provider
 		when 'facebook'
 			options.merge!({oauth1: facebook_oauth.uid, oauth2: facebook_oauth.oauth_token})
@@ -29,13 +36,16 @@ class User < ActiveRecord::Base
 			raise "Provider #{provider} not implemented."
 			nil
 		end
+
+		job_name = "#{provider.to_s}.#{job.to_s}"
 		
-		# check if task is ready (is in cache)
+		# check if task is ready first (is in cache)
 		options.merge!({find_and_return: true})
 		data = provider_instance.send(job, options)
 
 		if data.nil? #|| (data['metadata']['status'] != 'ready' rescue nil)
-			Stalker.enqueue("#{provider.to_s}.#{job.to_s}", options, {ttr: 3600})
+			options.merge!({find_and_return: false})
+			Stalker.enqueue(job_name, options, {ttr: 3600})
 			notify
 		end
 
