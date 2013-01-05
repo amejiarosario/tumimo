@@ -43,6 +43,10 @@ job 'facebook.feed' do |args|
 	log "mfb.feed=#{data.inspect}"
 end
 
+job 'debug.raise.error' do |args|
+	raise "This is an error!! (just testing)"
+end
+
 error do |e,job,args|
-	log "ERROR #{e.inspect}, #{job.inspect}, #{args.inspect}"
+	log "ERROR e.inspect=<#{e.inspect}>, job.inspect=<#{job.inspect}>, args=<#{args.inspect}>"
 end
